@@ -3,10 +3,10 @@ import { motion } from 'framer-motion';
 import { Star, GitFork, ExternalLink, Code } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { GithubRepo } from '@/services/apiService';
+import { GitHubRepo } from '@/types/github';
 
 interface RepositoryCardProps {
-  repo: GithubRepo;
+  repo: GitHubRepo;
   index: number;
 }
 

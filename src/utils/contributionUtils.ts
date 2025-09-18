@@ -1,9 +1,14 @@
 
 import { ContributionDay } from '@/types/github';
 
-export const getWeeksArray = (contributions: ContributionDay[]) => {
+export const getWeeksArray = (contributions?: ContributionDay[]) => {
   const weeks: ContributionDay[][] = [];
   let currentWeek: ContributionDay[] = [];
+
+  // Guard against undefined or empty input
+  if (!contributions || contributions.length === 0) {
+    return weeks;
+  }
 
   const firstDate = new Date(contributions[0].date);
   const firstDayOfWeek = firstDate.getDay();

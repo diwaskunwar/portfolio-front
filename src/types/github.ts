@@ -1,17 +1,26 @@
 
-export interface ContributionDay {
-  date: string;
-  count: number;
-  level: number;
-}
+// Re-export types from the GitHub client for consistency
+export type { 
+  GitHubRepo, 
+  GitHubProfile, 
+  ContributionStats, 
+  ContributionDay, 
+  ActivityBreakdown 
+} from '../services/githubClient';
 
-export interface ActivityBreakdown {
-  commits: { count: number; percentage: number };
-  pull_requests: { count: number; percentage: number };
-  issues: { count: number; percentage: number };
-  code_reviews: { count: number; percentage: number };
-}
+export type { 
+  ProcessedGitHubData, 
+  ProcessedSkill, 
+  ProcessedProfile, 
+  ProcessedExperience, 
+  ProcessedRepositories, 
+  ProcessedContributions 
+} from '../services/githubProcessor';
 
+// Import types for use in legacy interfaces
+import type { ActivityBreakdown, ContributionDay } from '../services/githubClient';
+
+// Legacy aliases for backward compatibility
 export interface Repository {
   name: string;
   url: string;

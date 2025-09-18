@@ -1,10 +1,10 @@
 
 import { useState, useEffect } from 'react';
-import { ContributionData } from '@/types/github';
+import { ContributionStats } from '@/types/github';
 import githubService from '@/services/githubService';
 
 export const useGithubContributions = () => {
-  const [contributionData, setContributionData] = useState<ContributionData | null>(null);
+  const [contributionData, setContributionData] = useState<ContributionStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

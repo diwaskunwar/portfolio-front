@@ -21,7 +21,7 @@ const Hero = () => {
     );
   }
 
-  const { name, headline, summary, Urls } = profileData.profile;
+  const { name, headline, summary, Urls, quote: profileQuote } = profileData.profile;
 
   // Format the summary with highlighted keywords
   const formatSummary = (text: string) => {
@@ -60,8 +60,8 @@ const Hero = () => {
     return formattedText;
   };
 
-  // Define quote directly
-  const quote = "I thrive in environments where innovation meets impact, and I'm eager to contribute my skills to projects that align with my passion for technology.";
+  // Prefer quote from profile JSON, fallback to a default
+  const quote = profileQuote || "I thrive in environments where innovation meets impact, and I'm eager to contribute my skills to projects that align with my passion for technology.";
 
   const formattedSummary = formatSummary(summary);
 
@@ -121,14 +121,15 @@ const Hero = () => {
           </div>
 
           <div className="flex flex-wrap gap-6 justify-center mt-4">
-            {socialLinks.filter(link => ['GitHub', 'LinkedIn', 'Hugging Face', 'Email'].includes(link.name)).map((link) => (
+            {socialLinks.map((link) => (
               <a href={link.url} key={link.name} target="_blank" rel="noopener noreferrer">
                 <Button
                   variant="outline"
                   className={`flex items-center px-5 py-2.5 rounded-md ${link.name === 'GitHub' ? 'bg-blue-600' :
                     link.name === 'LinkedIn' ? 'bg-indigo-600' :
                     link.name === 'Hugging Face' ? 'bg-purple-600' :
-                    link.name === 'Email' ? 'bg-cyan-600' : 'bg-gray-700'}
+                    link.name === 'Email' ? 'bg-cyan-600' :
+                    link.name === 'Phone' ? 'bg-emerald-600' : 'bg-gray-700'}
                     hover:opacity-90 text-white border-none shadow-md transition-all duration-200 hover:shadow-lg hover:scale-105`}
                 >
                   {link.name === 'Hugging Face' ? (

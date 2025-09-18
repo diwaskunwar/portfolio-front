@@ -6,7 +6,7 @@ import Container from '@/components/common/Container';
 import RepositoryCard from '@/components/github/RepositoryCard';
 import { Button } from '@/components/ui/button';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { GithubRepo } from '@/services/apiService';
+import { GitHubRepo } from '@/types/github';
 import { useGithubData } from '@/hooks/useGithubData';
 
 const Projects = () => {
@@ -14,10 +14,10 @@ const Projects = () => {
   const [viewType, setViewType] = useState<'top' | 'all'>('top');
 
   // Get GitHub data from custom hook
-  const { repos, fetchTopRepos, fetchRepos } = useGithubData(false);
+  const { repos, fetchTopRepos, fetchAllRepos, fetchRepos } = useGithubData(false);
 
   // State for repositories to display
-  const [displayedRepos, setDisplayedRepos] = useState<GithubRepo[]>([]);
+  const [displayedRepos, setDisplayedRepos] = useState<GitHubRepo[]>([]);
 
   // Track if initial fetch has been done
   const initialFetchDoneRef = useRef<boolean>(false);
@@ -25,13 +25,14 @@ const Projects = () => {
 
   // Memoized fetch function to prevent infinite loops
   const fetchRepositories = useCallback(() => {
+    console.log('Fetching repositories for viewType:', viewType);
     if (viewType === 'top') {
       fetchTopRepos(8);
     } else {
-      fetchRepos(true);
+      fetchAllRepos();
     }
     lastViewTypeRef.current = viewType;
-  }, [viewType, fetchTopRepos, fetchRepos]);
+  }, [viewType, fetchTopRepos, fetchAllRepos]);
 
   // Initial fetch and fetch on view type change
   useEffect(() => {
@@ -44,6 +45,7 @@ const Projects = () => {
 
   // Update displayed repos when repos data changes
   useEffect(() => {
+    console.log('Repos data changed:', repos.data);
     if (repos.data) {
       setDisplayedRepos(repos.data);
     }
@@ -78,8 +80,8 @@ const Projects = () => {
           </ToggleGroup>
         </div>
 
-        {/* Loading state */}
-        {repos.loading && (
+        {/* Loading state - only show if no data exists */}
+        {repos.loading && (!displayedRepos || displayedRepos.length === 0) && (
           <div className="flex justify-center items-center py-20">
             <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
             <span className="ml-2 text-gray-400">Loading repositories...</span>
@@ -89,7 +91,7 @@ const Projects = () => {
         {/* Error state */}
         {repos.error && (
           <div className="text-center py-10">
-            <p className="text-red-500 mb-4">Failed to load repositories</p>
+            <p className="text-red-500 mb-4">Failed to load repositories: {repos.error}</p>
             <Button
               variant="outline"
               onClick={fetchRepositories}
@@ -99,8 +101,21 @@ const Projects = () => {
           </div>
         )}
 
+        {/* No repositories found state */}
+        {!repos.loading && !repos.error && (!displayedRepos || displayedRepos.length === 0) && (
+          <div className="text-center py-10">
+            <p className="text-gray-400 mb-4">No repositories found</p>
+            <Button
+              variant="outline"
+              onClick={fetchRepositories}
+            >
+              Refresh
+            </Button>
+          </div>
+        )}
+
         {/* Repositories grid */}
-        {!repos.loading && !repos.error && displayedRepos && (
+        {!repos.error && displayedRepos && displayedRepos.length > 0 && (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {displayedRepos.map((repo, index) => (

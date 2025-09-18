@@ -22,13 +22,13 @@ const ContributionHeader: React.FC<ContributionHeaderProps> = ({ data }) => (
       <div className="flex items-center">
         <GitCommit size={16} className="text-green-600 dark:text-green-400 mr-1" />
         <span className="text-sm text-gray-700 dark:text-gray-300">
-          {data.activity_breakdown.commits.count} commits
+          {(data.activity_breakdown?.commits?.count ?? 0)} commits
         </span>
       </div>
       <div className="flex items-center">
         <GitPullRequest size={16} className="text-purple-600 dark:text-purple-400 mr-1" />
         <span className="text-sm text-gray-700 dark:text-gray-300">
-          {data.activity_breakdown.pull_requests.count} PRs
+          {(data.activity_breakdown?.pull_requests?.count ?? 0)} PRs
         </span>
       </div>
     </div>

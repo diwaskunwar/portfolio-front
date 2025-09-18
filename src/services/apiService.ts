@@ -204,21 +204,38 @@ class ApiService {
   async getProfile(options?: RequestOptions<ProfileData>): Promise<ProfileData> {
     if (options?.dispatch) {
       options.dispatch(profileActions.request());
-
-      return httpBase.get<ProfileData>('/profile/', undefined, undefined, {
-        ...options,
-        onSuccess: (data) => {
-          options.dispatch(profileActions.success(data));
-          options.onSuccess?.(data);
-        },
-        onError: (error) => {
-          options.dispatch(profileActions.failure(error));
-          options.onError?.(error);
-        }
-      });
     }
 
-    return httpBase.get<ProfileData>('/profile/', undefined, undefined, options);
+    try {
+      const res = await fetch('/response.json');
+      const json = await res.json();
+      const p = json.profile || {};
+      const data: ProfileData = {
+        profile: {
+          name: p.name || '',
+          headline: p.headline || '',
+          location: p.location || '',
+          industry: p.industry || '',
+          summary: p.summary || '',
+          picture: p.picture || '',
+          publicIdentifier: p.publicIdentifier || '',
+          address: p.address || '',
+          birthDate: p.birthDate || {},
+          Urls: Array.isArray(p.Urls) ? p.Urls : [],
+          quote: p.quote,
+        },
+      };
+
+      options?.dispatch?.(profileActions.success(data));
+      options?.onSuccess?.(data);
+      return data;
+    } catch (error) {
+      options?.dispatch?.(profileActions.failure(error));
+      options?.onError?.(error);
+      throw error;
+    } finally {
+      options?.onFinally?.();
+    }
   }
 
   // GitHub endpoints

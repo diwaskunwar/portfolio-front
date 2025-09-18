@@ -1,0 +1,202 @@
+{
+  "profile": {
+    "name": "Diwas Kunwar",
+    "headline": "ML Engineer",
+    "location": "Lalitpur District, Nepal",
+    "address": "Nakhipot-14, lalitpur",
+    "industry": "Computer Software",
+    "summary": "With a solid foundation in Python programming and extensive experience in backend development using Django and Flask/FastAPI, I specialize in turning intricate data into actionable insights and robust applications. My expertise spans from gathering web data using Beautiful Soup and Selenium to analyzing it with pandas and NumPy, crafting compelling narratives through data visualization tools like Plotly and Seaborn.\n\nI'm particularly proud of my recent ventures into blog generation app using gemini, analyzing stock market trends, developing a Document Chatbot for text extraction, or refining data for clearer insights, each project enhances my resolve to make a difference in the tech world. I thrive in environments where innovation meets impact, and I'm eager to contribute my skills to projects that align with my passion for technology.\n\nLet's connect and explore how we can collaborate to drive innovation and create lasting value through tech! 📈",
+    "quote": "I'm passionate about creating AI solutions that are not just technically impressive, but also ethically sound and genuinely useful.",
+    "picture": "https://media.licdn.com/dms/image/v2/C5603AQFkozY5OSZ9Ig/profile-displayphoto-shrink_800_800/0/1661676825113?e=1750291200&v=beta&t=T0wF0ik1l0GZEvpeV1LqBSQNlslZAS7nceJAdgdWhEY",
+    "publicIdentifier": "diwas-kunwar",
+    "Urls": [
+      { "name": "LinkedIn", "url": "https://www.linkedin.com/in/diwas-kunwar" },
+      { "name": "GitHub", "url": "https://github.com/diwaskunwar" },
+      { "name": "Email", "url": "mailto:diwas.kunwar@gmail.com" },
+      { "name": "Hugging Face", "url": "https://huggingface.co/diwaskunwar10" },
+      { "name": "Phone", "url": "tel:+9779841000000" }
+    ],
+    "birthDate": {
+      "month": 7,
+      "day": 13
+    }
+  },
+  "experience": {
+    "companies": [
+      {
+        "name": "Next AI",
+        "title": "ML Engineer",
+        "employmentType": "Full-time",
+        "location": "Kathmandu, Bāgmatī, Nepal",
+        "dateRange": {
+          "start": {
+            "month": 6,
+            "year": 2024
+          },
+          "end": null
+        },
+        "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQGO38-A32ohIQ/company-logo_400_400/0/1700313257521/next_ai_asia_logo",
+        "companyUrl": "https://www.linkedin.com/company/next-ai-asia/",
+        "companySize": "2-10 employees",
+        "industry": "Computer Software"
+      },
+      {
+        "name": "Inspiring Lab",
+        "title": "Python Intern",
+        "employmentType": "Internship",
+        "location": "Lalitpur District, Nepal",
+        "dateRange": {
+          "start": {
+            "month": 11,
+            "year": 2023
+          },
+          "end": {
+            "month": 3,
+            "year": 2024
+          }
+        },
+        "logo": "https://media.licdn.com/dms/image/v2/C510BAQFIVSqSD81Esw/company-logo_400_400/0/1631407218220/inspiring_studios_logo",
+        "companyUrl": "https://www.linkedin.com/company/inspiring-lab/",
+        "companySize": "11-50 employees",
+        "industry": "Computer Software"
+      },
+      {
+        "name": "Aama chhora enterprises",
+        "title": "Web Developer",
+        "employmentType": "Part-time",
+        "dateRange": {
+          "start": {
+            "month": 1,
+            "year": 2021
+          },
+          "end": {
+            "month": 1,
+            "year": 2023
+          }
+        }
+      }
+    ]
+  },
+  "education": [
+    {
+      "schoolName": "Kathmandu College of Technology",
+      "degreeName": "Bachelor's degree",
+      "fieldOfStudy": "Computer Science",
+      "dateRange": {
+        "start": {
+          "month": 10,
+          "year": 2019
+        },
+        "end": {
+          "month": 10,
+          "year": 2024
+        }
+      },
+      "schoolLogo": "https://media.licdn.com/dms/image/v2/D4D0BAQF38XIdWjS1kg/company-logo_400_400/0/1687692787682",
+      "schoolUrl": "https://www.linkedin.com/school/college-of-agriculture-janjgir/"
+    }
+  ],
+  "skills": [
+    "MongoDB",
+    "Databases",
+    "Large Language Models (LLM)",
+    "Panda",
+    "Jira",
+    "Jenkins",
+    "Selenium",
+    "pandas",
+    "Python (Programming Language)",
+    "docker",
+    "AWS Lambda",
+    "API Development",
+    "Flask",
+    "FastAPI",
+    "OAuth",
+    "JSON Web Token (JWT)",
+    "PostgreSQL",
+    "Git",
+    "Software Development",
+    "Network Security",
+    "Java"
+  ],
+  "categorizedSkills": {
+    "technical": [
+      "MongoDB",
+      "PostgreSQL",
+      "Python (Programming Language)",
+      "Java",
+      "docker",
+      "Git",
+      "Flask",
+      "FastAPI",
+      "API Development",
+      "OAuth",
+      "JSON Web Token (JWT)"
+    ],
+    "data": [
+      "Databases",
+      "Large Language Models (LLM)",
+      "Panda",
+      "pandas",
+      "AWS Lambda"
+    ],
+    "soft": [
+      "Jira",
+      "Slack",
+      "Software Development"
+    ],
+    "security": [
+      "Network Security"
+    ],
+    "testing": [
+      "Selenium",
+      "Appium"
+    ]
+  },
+  "certifications": [
+    {
+      "name": "AI For Everyone",
+      "authority": "DeepLearning.AI",
+      "issueDate": {
+        "month": 5,
+        "year": 2024
+      },
+      "credentialId": "U45YPW6HD4J2",
+      "url": "https://www.coursera.org/account/accomplishments/records/U45YPW6HD4J2",
+      "displaySource": "coursera.org"
+    },
+    {
+      "name": "Network Security",
+      "authority": "Coursera",
+      "issueDate": {
+        "month": 11,
+        "year": 2023
+      },
+      "credentialId": "VK4P4JTWES9R",
+      "url": "https://www.coursera.org/account/accomplishments/certificate/VK4P4JTWES9R",
+      "displaySource": "coursera.org",
+      "companyLogo": "https://media.licdn.com/dms/image/v2/C4D0BAQGexnfBxeEG-g/company-logo_400_400/0/1630530042036/coursera_logo"
+    },
+    {
+      "name": "Responsive Website Basics: Code with HTML, CSS, and JavaScript",
+      "authority": "Coursera",
+      "issueDate": {
+        "month": 3,
+        "year": 2019
+      },
+      "credentialId": "KUDKDXA8GKXS",
+      "url": "https://www.coursera.org/account/accomplishments/certificate/KUDKDXA8GKXS",
+      "displaySource": "coursera.org",
+      "companyLogo": "https://media.licdn.com/dms/image/v2/C4D0BAQGexnfBxeEG-g/company-logo_400_400/0/1630530042036/coursera_logo"
+    }
+  ],
+  "languages": [],
+  "stats": {
+    "totalYearsExperience": 3,
+    "numberOfCompanies": 3,
+    "numberOfEducations": 1,
+    "numberOfSkills": 20,
+    "numberOfCertifications": 3,
+    "numberOfLanguages": 0
+  }
+}

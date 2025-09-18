@@ -1,6 +1,6 @@
 import { useState, useEffect, useReducer } from 'react';
 import githubService from '@/services/githubService';
-import { GithubProfile, GithubRepo, GithubContribution } from '@/services/apiService';
+import { GitHubProfile, GitHubRepo, ContributionStats } from '@/types/github';
 import {
   FETCH_GITHUB_PROFILE_REQUEST,
   FETCH_GITHUB_PROFILE_SUCCESS,
@@ -16,17 +16,17 @@ import {
 // Define the state interface
 interface GithubState {
   profile: {
-    data: GithubProfile | null;
+    data: GitHubProfile | null;
     loading: boolean;
     error: string | null;
   };
   repos: {
-    data: GithubRepo[] | null;
+    data: GitHubRepo[] | null;
     loading: boolean;
     error: string | null;
   };
   contributions: {
-    data: GithubContribution | null;
+    data: ContributionStats | null;
     loading: boolean;
     error: string | null;
   };
@@ -35,13 +35,13 @@ interface GithubState {
 // Define action types
 type GithubAction = 
   | { type: typeof FETCH_GITHUB_PROFILE_REQUEST }
-  | { type: typeof FETCH_GITHUB_PROFILE_SUCCESS; payload: GithubProfile }
+  | { type: typeof FETCH_GITHUB_PROFILE_SUCCESS; payload: GitHubProfile }
   | { type: typeof FETCH_GITHUB_PROFILE_FAILURE; error: any }
   | { type: typeof FETCH_GITHUB_REPOS_REQUEST }
-  | { type: typeof FETCH_GITHUB_REPOS_SUCCESS; payload: GithubRepo[] }
+  | { type: typeof FETCH_GITHUB_REPOS_SUCCESS; payload: GitHubRepo[] }
   | { type: typeof FETCH_GITHUB_REPOS_FAILURE; error: any }
   | { type: typeof FETCH_GITHUB_CONTRIBUTIONS_REQUEST }
-  | { type: typeof FETCH_GITHUB_CONTRIBUTIONS_SUCCESS; payload: GithubContribution }
+  | { type: typeof FETCH_GITHUB_CONTRIBUTIONS_SUCCESS; payload: ContributionStats }
   | { type: typeof FETCH_GITHUB_CONTRIBUTIONS_FAILURE; error: any };
 
 // Initial state
@@ -104,6 +104,7 @@ const githubReducer = (state: GithubState, action: GithubAction): GithubState =>
           ...state.repos,
           loading: true,
           error: null,
+          // Don't clear data during loading to prevent flickering
         },
       };
     case FETCH_GITHUB_REPOS_SUCCESS:
@@ -183,6 +184,16 @@ export const useGithubData = (fetchOnMount: boolean = true) => {
     }
   };
 
+  // Fetch all GitHub repositories (sorted by Python first)
+  const fetchAllRepos = async () => {
+    try {
+      console.log('useGithubData: fetchAllRepos called');
+      await githubService.getAllRepos({ dispatch });
+    } catch (error) {
+      console.error('Error fetching all GitHub repositories:', error);
+    }
+  };
+
   // Fetch GitHub top repositories
   const fetchTopRepos = async (limit: number = 8) => {
     try {
@@ -221,6 +232,7 @@ export const useGithubData = (fetchOnMount: boolean = true) => {
     ...state,
     fetchProfile,
     fetchRepos,
+    fetchAllRepos,
     fetchTopRepos,
     fetchContributions,
     fetchAllData,
