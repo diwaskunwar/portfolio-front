@@ -1,4 +1,5 @@
 import httpBase, { RequestOptions } from './httpBase';
+import profileData from '../data/response.json';
 import {
   LinkedInExperience,
   LinkedInEducation,
@@ -54,8 +55,7 @@ class LinkedInService {
     }
 
     try {
-      const res = await fetch('/response.json');
-      const json = await res.json();
+      const json = profileData as any;
       const companies = (json.experience?.companies || []).map((c: any) => ({
         name: c.name,
         title: c.title,
@@ -86,8 +86,7 @@ class LinkedInService {
     }
 
     try {
-      const res = await fetch('/response.json');
-      const json = await res.json();
+      const json = profileData as any;
       const data: LinkedInEducation[] = (json.education || []).map((e: any) => ({
         schoolName: e.schoolName,
         degreeName: e.degreeName,
@@ -119,8 +118,7 @@ class LinkedInService {
     }
 
     try {
-      const res = await fetch('/response.json');
-      const json = await res.json();
+      const json = profileData as any;
       const data: LinkedInCertificate[] = (json.certifications || []).map((c: any) => ({
         name: c.name,
         authority: c.authority,
@@ -151,8 +149,7 @@ class LinkedInService {
     }
 
     try {
-      const res = await fetch('/response.json');
-      const json = await res.json();
+      const json = profileData as any;
       const data: string[] = json.skills || [];
 
       options?.dispatch?.(linkedinSkillsActions.success(data));
@@ -170,8 +167,7 @@ class LinkedInService {
   // Get categorized LinkedIn skills
   async getCategorizedSkills(options?: RequestOptions<Record<string, string[]>>): Promise<Record<string, string[]>> {
     try {
-      const res = await fetch('/response.json');
-      const json = await res.json();
+      const json = profileData as any;
       const data: Record<string, string[]> = json.categorizedSkills || {};
       options?.onSuccess?.(data);
       return data;
@@ -186,8 +182,7 @@ class LinkedInService {
   // Get all LinkedIn data
   async getAllData(options?: RequestOptions<any>): Promise<any> {
     try {
-      const res = await fetch('/response.json');
-      const json = await res.json();
+      const json = profileData as any;
       options?.onSuccess?.(json);
       return json;
     } catch (error) {

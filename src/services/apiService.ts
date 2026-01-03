@@ -1,4 +1,5 @@
 import httpBase, { RequestOptions } from './httpBase';
+import profileData from '../data/response.json';
 import {
   FETCH_PROFILE_REQUEST,
   FETCH_PROFILE_SUCCESS,
@@ -198,6 +199,7 @@ const linkedinSkillsActions = createApiActions<string[]>(
   FETCH_LINKEDIN_SKILLS_FAILURE
 );
 
+
 // API service methods
 class ApiService {
   // Profile endpoints
@@ -207,9 +209,7 @@ class ApiService {
     }
 
     try {
-      const res = await fetch('/response.json');
-      const json = await res.json();
-      const p = json.profile || {};
+      const p = (profileData as any).profile || {};
       const data: ProfileData = {
         profile: {
           name: p.name || '',
