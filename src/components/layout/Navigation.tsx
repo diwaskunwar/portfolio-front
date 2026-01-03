@@ -1,35 +1,30 @@
 
-import { useState, useEffect, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Menu, X, Home, Briefcase, Code, FolderGit2, Github, Award } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Home, Briefcase, Code, FolderGit2, Github, Award, Menu, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const Navigation = () => {
   const [activeSection, setActiveSection] = useState<string>('hero');
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [isNavHovered, setIsNavHovered] = useState<boolean>(false);
-  const navRef = useRef<HTMLElement>(null);
-  const activeItemRef = useRef<HTMLButtonElement>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   const navItems = [
     { id: 'hero', label: 'Home', icon: Home },
     { id: 'professional-journey', label: 'Professional Journey', icon: Briefcase },
     { id: 'technical-expertise', label: 'Technical Expertise', icon: Code },
     { id: 'projects', label: 'Projects', icon: FolderGit2 },
-    { id: 'github-activity', label: 'GitHub', icon: Github },
+    { id: 'github-activity', label: 'GitHub Activity', icon: Github },
     { id: 'certificates', label: 'Certificates', icon: Award },
   ];
 
   useEffect(() => {
     const handleScroll = () => {
       const sections = navItems.map(item => document.getElementById(item.id));
-      const scrollPosition = window.scrollY + 200;
+      const scrollPosition = window.scrollY + window.innerHeight / 2;
 
       sections.forEach(section => {
         if (!section) return;
-
         const sectionTop = section.offsetTop;
         const sectionHeight = section.clientHeight;
-
         if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
           setActiveSection(section.id);
         }
@@ -40,8 +35,6 @@ const Navigation = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // No need for centering effect anymore
-
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -49,105 +42,90 @@ const Navigation = () => {
         top: element.offsetTop,
         behavior: 'smooth'
       });
-      setIsMenuOpen(false);
+      setIsMobileMenuOpen(false);
     }
   };
 
+  const activeItem = navItems.find(item => item.id === activeSection) || navItems[0];
+
   return (
     <>
-      {/* Desktop Vertical Navigation */}
-      <nav
-        ref={navRef}
-        className="hidden md:flex fixed left-0 top-1/2 -translate-y-1/2 z-50 flex-col items-center bg-transparent transition-all duration-500 ease-in-out w-56 overflow-visible"
-        onMouseEnter={() => setIsNavHovered(true)}
-        onMouseLeave={() => setIsNavHovered(false)}
-      >
-        {/* Simplified navigation approach */}
-        <div className="flex flex-col px-2 w-full">
+      {/* Floating Single Item Navigation (Desktop) */}
+      <div className="hidden md:flex fixed left-6 top-1/2 -translate-y-1/2 z-[110] items-center gap-4 group">
+        {/* Subtle vertical indicator dots (on the left) */}
+        <div className="flex flex-col gap-2">
           {navItems.map((item) => (
-            <Button
+            <button
               key={item.id}
-              ref={item.id === activeSection ? activeItemRef : undefined}
-              variant="ghost"
-              className={`relative flex items-center justify-start px-3 py-2.5 rounded-full transition-all duration-300 w-full overflow-hidden whitespace-nowrap ${item.id === activeSection
-                ? 'text-white bg-blue-600/30 font-medium ring-2 ring-blue-500/30 ring-offset-1 ring-offset-transparent'
-                : 'text-gray-400 hover:text-white hover:bg-gray-800/20'
-                }`}
               onClick={() => scrollToSection(item.id)}
-              style={{
-                // Only show active item by default, show all on hover
-                display: item.id === activeSection || isNavHovered ? 'flex' : 'none',
-                // Ensure consistent spacing
-                marginBottom: '0.75rem',
-                // Add transition for smooth appearance
-                transition: 'all 0.3s ease-in-out',
-              }}
-              data-active={item.id === activeSection}
-              data-section={item.id}
-            >
-              <item.icon
-                className={`h-5 w-5 flex-shrink-0 transition-all duration-300 mr-3 ${item.id === activeSection ? 'text-blue-300' : 'text-gray-400'}`}
-              />
-              <span className="transition-opacity duration-300">
-                {item.label}
-              </span>
-            </Button>
+              className={cn(
+                "w-1.5 h-3 rounded-full transition-all duration-300",
+                activeSection === item.id ? "bg-white h-8 shadow-[0_0_10px_rgba(255,255,255,0.5)]" : "bg-white/20 hover:bg-white/40"
+              )}
+              title={item.label}
+            />
           ))}
         </div>
-      </nav>
 
-      {/* Mobile Menu Button */}
-      <div className="md:hidden fixed top-1/2 -translate-y-1/2 left-4 z-50">
-        <Button
-          variant="ghost"
-          size="icon"
-          className={`text-white hover:bg-blue-600/20 rounded-full transition-all duration-300 ${
-            isMenuOpen ? 'bg-blue-600/30 rotate-90' : 'bg-gray-800/30 backdrop-blur-sm'
-          }`}
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        {/* The active pill (to the right of the dots) */}
+        <div
+          className="flex items-center gap-3 px-5 py-3 rounded-full bg-white text-black shadow-[0_0_30px_rgba(255,255,255,0.2)] animate-in fade-in slide-in-from-left duration-500 cursor-pointer hover:scale-105 transition-transform"
+          onClick={() => setIsMobileMenuOpen(true)}
         >
-          {isMenuOpen ? <X className="h-5 w-5 text-blue-300" /> : <Menu className="h-5 w-5" />}
-        </Button>
+          <activeItem.icon size={18} />
+          <span className="text-[10px] tracking-[0.3em] font-bold uppercase whitespace-nowrap">
+            {activeItem.label}
+          </span>
+        </div>
       </div>
 
-      {/* Mobile Navigation Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden fixed top-0 left-0 h-full w-64 bg-gray-900/80 backdrop-blur-md z-40 animate-in slide-in-from-left duration-300 overflow-hidden">
-          <div className="h-full flex flex-col justify-center px-4 space-y-4">
-            {/* Active item first */}
-            {navItems
-              .filter(item => item.id === activeSection)
-              .map((item) => (
-                <Button
-                  key={item.id}
-                  variant="ghost"
-                  className="relative flex items-center justify-start px-3 py-2.5 rounded-full transition-all duration-300 w-full overflow-hidden whitespace-nowrap text-white bg-blue-600/30 font-medium ring-2 ring-blue-500/30 ring-offset-1 ring-offset-transparent animate-in fade-in slide-in-from-left duration-300"
-                  onClick={() => scrollToSection(item.id)}
-                >
-                  <item.icon className="h-5 w-5 flex-shrink-0 mr-3 transition-all duration-300 text-blue-300" />
-                  <span className="transition-opacity duration-300">
-                    {item.label}
-                  </span>
-                </Button>
-              ))}
+      {/* Mobile Header Bar */}
+      <div className="md:hidden fixed top-0 left-0 w-full h-16 bg-black/80 backdrop-blur-xl border-b border-white/5 z-[100] flex justify-between items-center px-6">
+        <span className="text-white text-[10px] tracking-[0.5em] font-bold uppercase">
+          {activeItem.label}
+        </span>
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="text-white p-2"
+        >
+          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
 
-            {/* Other items */}
-            {navItems
-              .filter(item => item.id !== activeSection)
-              .map((item, index) => (
-                <Button
+      {/* Full Menu Overlay (Accessible via clicking active pill or mobile menu) */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 bg-black/95 backdrop-blur-2xl z-[150] flex flex-col items-center justify-center animate-in fade-in duration-500">
+          <div className="absolute top-10 right-10">
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="p-4 bg-white text-black rounded-full hover:rotate-90 transition-transform duration-300"
+            >
+              <X size={24} />
+            </button>
+          </div>
+
+          <div className="flex flex-col items-center gap-10">
+            <div className="mb-10 text-center">
+              <h2 className="text-white/20 text-xs tracking-[0.8em] uppercase mb-4">Navigate System</h2>
+              <div className="w-20 h-px bg-white/20 mx-auto"></div>
+            </div>
+
+            <div className="flex flex-col items-center gap-12">
+              {navItems.map((item, i) => (
+                <button
                   key={item.id}
-                  variant="ghost"
-                  className="relative flex items-center justify-start px-3 py-2.5 rounded-full transition-all duration-300 w-full overflow-hidden whitespace-nowrap text-gray-400 hover:text-white hover:bg-gray-800/20 animate-in fade-in slide-in-from-left duration-300"
-                  style={{ animationDelay: `${(index + 1) * 50}ms` }}
                   onClick={() => scrollToSection(item.id)}
+                  className={cn(
+                    "group flex items-center gap-6 text-2xl md:text-4xl tracking-[0.4em] font-extralight uppercase transition-all",
+                    activeSection === item.id ? "text-white scale-110" : "text-white/30 hover:text-white"
+                  )}
+                  style={{ animationDelay: `${i * 100}ms` }}
                 >
-                  <item.icon className="h-5 w-5 flex-shrink-0 mr-3 transition-all duration-300 text-gray-400" />
-                  <span className="transition-opacity duration-300">
-                    {item.label}
-                  </span>
-                </Button>
+                  <item.icon size={24} className={cn("transition-transform duration-500 group-hover:rotate-12", activeSection === item.id ? "text-white" : "text-white/20")} />
+                  {item.label}
+                </button>
               ))}
+            </div>
           </div>
         </div>
       )}

@@ -1,9 +1,8 @@
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Section from '@/components/common/Section';
 import Container from '@/components/common/Container';
-import { Card, CardContent } from '@/components/ui/card';
-import { Code, Database, Globe, Terminal, Upload, Workflow } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface Skill {
   name: string;
@@ -12,118 +11,110 @@ interface Skill {
 
 interface SkillCategory {
   title: string;
-  icon: React.ElementType;
   skills: Skill[];
-  color: string;
 }
 
 const skillCategories: SkillCategory[] = [
   {
-    title: 'Technical',
-    icon: Code,
-    color: 'from-purple-500 to-purple-700',
+    title: 'TECHNICAL CORE',
     skills: [
       { name: 'Python', proficiency: 95 },
-      { name: 'React', proficiency: 92 },
-      { name: 'Java', proficiency: 89 },
+      { name: 'React', proficiency: 82 },
       { name: 'PHP', proficiency: 86 }
     ]
   },
   {
-    title: 'Database',
-    icon: Database,
-    color: 'from-green-500 to-green-700',
+    title: 'DATABASE & STORE',
     skills: [
       { name: 'MongoDB', proficiency: 95 },
-      { name: 'PostgreSQL', proficiency: 92 }
-    ]
-  },
-  {
-    title: 'VectorStore',
-    icon: Upload,
-    color: 'from-blue-500 to-blue-700',
-    skills: [
+      { name: 'PostgreSQL', proficiency: 72 },
       { name: 'Qdrant', proficiency: 95 },
       { name: 'FAISS', proficiency: 92 }
     ]
   },
   {
-    title: 'Soft',
-    icon: Globe,
-    color: 'from-blue-400 to-blue-600',
+    title: 'AI & DATA',
     skills: [
-      { name: 'Jira', proficiency: 95 },
-      { name: 'Trello', proficiency: 92 }
+      { name: 'LLM Systems', proficiency: 95 },
+      { name: 'Pandas / NumPy', proficiency: 92 },
+      { name: 'FastAPI', proficiency: 95 },
+      { name: 'Docker / CentOS', proficiency: 83 }
     ]
   },
   {
-    title: 'Testing',
-    icon: Terminal,
-    color: 'from-yellow-500 to-yellow-700',
+    title: 'TOOLS & SOFT',
     skills: [
-      { name: 'Selenium', proficiency: 95 }
-    ]
-  },
-  {
-    title: 'Other',
-    icon: Workflow,
-    color: 'from-red-500 to-red-700',
-    skills: [
-      { name: 'Large Language Models (LLM)', proficiency: 95 },
-      { name: 'Panda', proficiency: 92 },
-      { name: 'Networking', proficiency: 89 },
-      { name: 'CentOS', proficiency: 86 },
-      { name: 'Docker', proficiency: 83 }
+      { name: 'Jira / Trello', proficiency: 95 },
+      { name: 'Selenium / Testing', proficiency: 95 },
+      { name: 'Git Workflow', proficiency: 94 },
+      { name: 'Networking', proficiency: 79 }
     ]
   }
 ];
 
-const ProgressBar = ({ value, color }: { value: number; color: string }) => {
-  return (
-    <div className="h-2 w-full bg-gray-700 rounded-full overflow-hidden">
-      <div 
-        className={`h-full bg-gradient-to-r ${color}`} 
-        style={{ width: `${value}%` }}
-      ></div>
-    </div>
-  );
-};
-
 const TechnicalExpertise = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <Section id="technical-expertise" className="bg-gray-900 text-white py-20">
-      <Container>
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-          Technical Expertise
-        </h2>
-        <p className="text-gray-400 text-center mb-12 max-w-2xl mx-auto">
-          A diverse skill set honed through years of practical experience and continuous learning
-        </p>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <Section id="technical-expertise">
+      <Container className="py-24" ref={containerRef}>
+        {/* Header */}
+        <div className="text-center mb-20">
+          <span className="text-xs tracking-[0.4em] text-white uppercase mb-4 block font-bold">Capabilities</span>
+          <h2 className="text-4xl md:text-6xl font-extralight text-white tracking-tighter mb-4">
+            Technical Expertise
+          </h2>
+          <div className="w-24 h-px bg-white/40 mx-auto"></div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-24">
           {skillCategories.map((category, index) => (
-            <Card key={index} className="bg-gray-800/60 border-gray-700">
-              <CardContent className="p-6">
-                <div className="flex items-center mb-6">
-                  <div className={`p-3 rounded-lg bg-gradient-to-br ${category.color} mr-4`}>
-                    <category.icon className="h-6 w-6 text-white" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-white">{category.title}</h3>
-                </div>
-                
-                <div className="space-y-4">
-                  {category.skills.map((skill, skillIndex) => (
-                    <div key={skillIndex}>
-                      <div className="flex justify-between mb-1">
-                        <span className="text-gray-300">{skill.name}</span>
-                        <span className="text-gray-400">{skill.proficiency}%</span>
-                      </div>
-                      <ProgressBar value={skill.proficiency} color={category.color} />
+            <div key={index} className="space-y-10">
+              <h3 className="text-[11px] tracking-[0.5em] font-medium text-white border-l-2 border-white pl-4 uppercase">{category.title}</h3>
+
+              <div className="grid grid-cols-1 gap-8">
+                {category.skills.map((skill, skillIndex) => (
+                  <div key={skillIndex} className="group">
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-sm font-medium tracking-[0.2em] text-white uppercase group-hover:text-white transition-colors">{skill.name}</span>
+                      <span className="text-[10px] text-white group-hover:text-white transition-colors uppercase font-bold">{skill.proficiency}%</span>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                    {/* High-Contrast Progress Bar with Liquid Animation */}
+                    <div className="h-[6px] w-full bg-white/10 relative overflow-hidden rounded-full border border-white/10">
+                      <div
+                        className={cn(
+                          "absolute inset-y-0 left-0 progress-liquid transition-all duration-1000 ease-out",
+                          isVisible ? "opacity-100" : "opacity-0"
+                        )}
+                        style={{
+                          width: isVisible ? `${skill.proficiency}%` : '0%',
+                          '--progress-width': `${skill.proficiency}%`
+                        } as React.CSSProperties}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       </Container>

@@ -2,9 +2,7 @@
 import React from 'react';
 import Section from '@/components/common/Section';
 import Container from '@/components/common/Container';
-import { Card, CardContent } from '@/components/ui/card';
-import { Briefcase, MapPin, Calendar } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Briefcase, MapPin, Calendar, ArrowUpRight } from 'lucide-react';
 
 interface Experience {
   title: string;
@@ -19,113 +17,79 @@ const experiences: Experience[] = [
   {
     title: 'ML Engineer',
     company: 'Next AI',
-    location: 'Kathmandu, Bagmati, Nepal',
-    period: '06/2024 - Present',
+    location: 'Kathmandu, Nepal',
+    period: 'JUN 2024 - PRESENT',
     description: [
-      'Developed advanced AI solutions and ML models at Next AI',
-      'Implemented RAG-based systems for improved information retrieval',
-      'Optimized backend services with FastAPI and MongoDB'
+      'Developed advanced AI solutions and ML models including RAG-based systems.',
+      'Optimized backend services with FastAPI and MongoDB for production scale.'
     ],
-    skills: ['Python', 'Streamlit', 'React', 'FastAPI', 'Docker', 'Qdrant', 'FAISS', 'LLMs', 'MongoDB', 'Git', 'Trello', 'Jira']
+    skills: ['Python', 'React', 'FastAPI', 'Docker', 'Qdrant', 'LLMs', 'MongoDB']
   },
   {
     title: 'Python Intern',
     company: 'Inspiring Lab',
-    location: 'Lalitpur District, Nepal',
-    period: '11/2023 - 03/2024',
+    location: 'Lalitpur, Nepal',
+    period: 'NOV 2023 - MAR 2024',
     description: [
-      'Performed data extraction and API development projects at Inspiring Lab',
-      'Created automated web scraping solutions with high accuracy',
-      'Implemented secure authentication systems with JWT'
+      'Built automated web scraping solutions with high accuracy and extraction efficiency.',
+      'Implemented secure authentication systems and API development tasks.'
     ],
-    skills: ['Python', 'Selenium', 'Scrapy', 'FastAPI', 'React', 'Seaborn', 'Docker', 'pandas', 'Git']
-  },
-  {
-    title: 'Web Developer',
-    company: 'Aama chhora enterprises',
-    location: 'Remote',
-    period: '01/2021 - 01/2023',
-    description: [
-      'Worked as Web Developer focusing on delivering high-quality solutions'
-    ],
-    skills: ['HTML', 'CSS', 'JavaScript', 'PHP']
+    skills: ['Python', 'Selenium', 'Scrapy', 'FastAPI', 'Pandas', 'Git']
   }
 ];
 
-const ExperienceCard: React.FC<{ experience: Experience }> = ({ experience }) => {
-  return (
-    <Card className="mb-8 bg-gray-800/60 border-gray-700 overflow-hidden">
-      <CardContent className="p-6">
-        <div className="flex flex-col md:flex-row justify-between mb-4">
-          <div>
-            <h3 className="text-xl font-semibold text-white">{experience.title}</h3>
-            <p className="text-blue-400 flex items-center mt-1">
-              <Briefcase className="w-4 h-4 mr-2" />
-              {experience.company}
-            </p>
-          </div>
-          <div className="mt-2 md:mt-0 md:text-right">
-            <p className="text-gray-300 flex items-center md:justify-end">
-              <MapPin className="w-4 h-4 mr-2" />
-              {experience.location}
-            </p>
-            <p className="text-gray-400 flex items-center md:justify-end mt-1">
-              <Calendar className="w-4 h-4 mr-2" />
-              {experience.period}
-            </p>
-          </div>
-        </div>
-        
-        <ul className="space-y-2 mb-4">
-          {experience.description.map((item, index) => (
-            <li key={index} className="text-gray-300 flex">
-              <span className="text-purple-400 mr-2">→</span>
-              <span>{item}</span>
-            </li>
-          ))}
-        </ul>
-        
-        <div className="flex flex-wrap gap-2 mt-4">
-          {experience.skills.map((skill) => (
-            <Badge key={skill} variant="secondary" className="bg-gray-700 text-gray-200">
-              {skill}
-            </Badge>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
-
 const ProfessionalJourney = () => {
   return (
-    <Section id="professional-journey" className="bg-gray-900 text-white py-20">
-      <Container>
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-          Professional Journey
-        </h2>
-        <p className="text-gray-400 text-center mb-12 max-w-2xl mx-auto">
-          A track record of transforming complex technical challenges into elegant, efficient solutions
-        </p>
-        
-        <div className="relative">
-          {/* Timeline line */}
-          <div className="absolute left-0 md:left-1/2 transform md:-translate-x-1/2 h-full w-1 bg-blue-500/30 rounded"></div>
-          
-          {/* Experience cards */}
-          <div className="space-y-12">
-            {experiences.map((exp, index) => (
-              <div key={index} className="relative">
-                {/* Timeline dot */}
-                <div className="absolute left-0 md:left-1/2 transform md:-translate-x-1/2 -top-2 w-5 h-5 rounded-full bg-blue-500"></div>
-                
-                {/* Card - alternating layout on desktop */}
-                <div className={`md:w-1/2 ${index % 2 === 0 ? 'md:pr-8 md:ml-auto' : 'md:pl-8'}`}>
-                  <ExperienceCard experience={exp} />
+    <Section id="professional-journey">
+      <Container className="py-24">
+        {/* Header */}
+        <div className="text-center mb-24">
+          <span className="text-xs tracking-[0.4em] text-white uppercase mb-4 block font-bold">Experience</span>
+          <h2 className="text-4xl md:text-6xl font-extralight text-white tracking-tighter mb-4">
+            Professional Journey
+          </h2>
+          <div className="w-24 h-px bg-white/40 mx-auto"></div>
+        </div>
+
+        <div className="max-w-4xl mx-auto border-l border-white/20 pl-8 md:pl-20 space-y-20 relative">
+          {experiences.map((exp, index) => (
+            <div key={index} className="relative group animate-fade-in" style={{ animationDelay: `${index * 150}ms` }}>
+              {/* Point on timeline */}
+              <div className="absolute -left-[37px] md:-left-[85px] top-0 w-3 h-3 rounded-full bg-black border border-white/60 group-hover:bg-white group-hover:border-white transition-all duration-500 scale-100 group-hover:scale-150 shadow-[0_0_10px_rgba(255,255,255,0.2)]"></div>
+
+              <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6">
+                <div>
+                  <h3 className="text-3xl font-light text-white tracking-tight group-hover:translate-x-1 transition-transform inline-flex items-center gap-2">
+                    {exp.title}
+                    <ArrowUpRight className="w-5 h-5 text-white/60 group-hover:text-white transition-colors" />
+                  </h3>
+                  <div className="flex items-center gap-5 text-white text-[11px] tracking-widest uppercase mt-3 font-bold">
+                    <span className="flex items-center gap-2 text-white"><Briefcase size={14} className="text-white" /> {exp.company}</span>
+                    <span className="flex items-center gap-2 text-white"><MapPin size={14} className="text-white" /> {exp.location}</span>
+                  </div>
+                </div>
+                <div className="text-white text-[11px] tracking-[0.3em] font-bold flex items-center gap-2 mt-2 md:mt-0 uppercase">
+                  <Calendar size={14} className="text-white" /> {exp.period}
                 </div>
               </div>
-            ))}
-          </div>
+
+              <div className="space-y-4 max-w-2xl">
+                {exp.description.map((item, i) => (
+                  <p key={i} className="text-white font-light leading-relaxed text-base">
+                    {item}
+                  </p>
+                ))}
+              </div>
+
+              <div className="flex flex-wrap gap-2 mt-8">
+                {exp.skills.map((skill) => (
+                  <span key={skill} className="px-4 py-1.5 text-[10px] tracking-[0.2em] font-bold text-white border border-white/40 rounded-full uppercase hover:text-black hover:bg-white hover:border-white transition-all duration-300">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </Container>
     </Section>

@@ -1,158 +1,82 @@
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React from 'react';
 import Section from '@/components/common/Section';
 import Container from '@/components/common/Container';
+import { Award, ExternalLink, Calendar, CheckCircle2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Award, ExternalLink, Loader2 } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { useLinkedInData } from '@/hooks/useLinkedInData';
-import { LinkedInCertificate } from '@/services/apiService';
 
-// Function to extract skills from certificate name
-const extractSkills = (name: string): string[] => {
-  // Common skills to look for in certificate names
-  const skillKeywords = [
-    'Python', 'JavaScript', 'TypeScript', 'React', 'Angular', 'Vue', 'Node.js',
-    'HTML', 'CSS', 'AWS', 'Azure', 'GCP', 'Cloud', 'DevOps', 'Docker', 'Kubernetes',
-    'Machine Learning', 'ML', 'AI', 'Data Science', 'Deep Learning', 'Neural Networks',
-    'SQL', 'NoSQL', 'MongoDB', 'PostgreSQL', 'MySQL', 'Database',
-    'Web Development', 'Mobile Development', 'Frontend', 'Backend', 'Full Stack',
-    'Security', 'Networking', 'Blockchain', 'IoT', 'Agile', 'Scrum',
-    'GraphQL', 'REST', 'API', 'Microservices', 'Architecture'
-  ];
+interface Certificate {
+  title: string;
+  issuer: string;
+  date: string;
+  link?: string;
+}
 
-  // Extract skills from certificate name
-  const foundSkills = skillKeywords.filter(skill =>
-    name.toLowerCase().includes(skill.toLowerCase())
-  );
-
-  // If no skills found, return generic skills based on certificate type
-  if (foundSkills.length === 0) {
-    if (name.toLowerCase().includes('web')) return ['HTML', 'CSS', 'JavaScript'];
-    if (name.toLowerCase().includes('data')) return ['Data Analysis', 'Statistics'];
-    if (name.toLowerCase().includes('cloud')) return ['Cloud Computing'];
-    if (name.toLowerCase().includes('security')) return ['Cybersecurity'];
-    return ['Professional Development'];
+const certificates: Certificate[] = [
+  {
+    title: 'Python for Data Science and Machine Learning',
+    issuer: 'Coursera / IBM',
+    date: '2023',
+  },
+  {
+    title: 'Advanced Machine Learning with Python',
+    issuer: 'DeepLearning.AI',
+    date: '2024',
+  },
+  {
+    title: 'Backend Engineering Professional',
+    issuer: 'Frontend Masters',
+    date: '2023',
   }
-
-  return foundSkills;
-};
+];
 
 const Certificates = () => {
-  // Track if initial fetch has been done
-  const initialFetchDoneRef = useRef<boolean>(false);
-
-  // Get LinkedIn data from custom hook
-  const { certificates, fetchCertificates } = useLinkedInData(false);
-
-  // Fetch certificates on mount
-  useEffect(() => {
-    if (!initialFetchDoneRef.current) {
-      fetchCertificates();
-      initialFetchDoneRef.current = true;
-    }
-  }, [fetchCertificates]);
-
   return (
-    <Section id="certificates" className="bg-gray-900 text-white">
-      <Container>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
-            Certificates & Achievements
+    <Section id="certificates">
+      <Container className="py-24">
+        {/* Header */}
+        <div className="text-center mb-20">
+          <span className="text-xs tracking-[0.4em] text-white uppercase mb-4 block font-bold">Recognition</span>
+          <h2 className="text-4xl md:text-6xl font-extralight text-white tracking-tighter mb-4">
+            Certificates
           </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            Professional certifications and achievements that validate my expertise
-          </p>
-        </motion.div>
+          <div className="w-24 h-px bg-white/40 mx-auto"></div>
+        </div>
 
-        {/* Loading state */}
-        {certificates.loading && (
-          <div className="flex justify-center items-center py-20">
-            <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
-            <span className="ml-2 text-gray-400">Loading certificates...</span>
-          </div>
-        )}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {certificates.map((cert, index) => (
+            <Card key={index} className="bg-white/[0.03] backdrop-blur-md border-white/5 rounded-2xl group hover:bg-white/5 transition-all duration-500 overflow-hidden relative">
+              <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
+                <Award size={64} className="text-white" />
+              </div>
+              <CardContent className="p-8 relative z-10">
+                <div className="mb-6 flex justify-between items-start">
+                  <div className="p-2 border border-white/20 rounded-lg">
+                    <Award className="h-5 w-5 text-white" />
+                  </div>
+                  {cert.link && (
+                    <a href={cert.link} target="_blank" rel="noopener noreferrer" className="text-white hover:scale-125 transition-all">
+                      <ExternalLink size={16} />
+                    </a>
+                  )}
+                </div>
 
-        {/* Error state */}
-        {certificates.error && (
-          <div className="text-center py-10">
-            <p className="text-red-500 mb-4">Failed to load certificates</p>
-            <Button
-              variant="outline"
-              onClick={fetchCertificates}
-            >
-              Try Again
-            </Button>
-          </div>
-        )}
+                <h3 className="text-lg font-light text-white mb-3 tracking-tight leading-snug group-hover:translate-x-1 transition-transform">
+                  {cert.title}
+                </h3>
 
-        {/* Certificates grid */}
-        {!certificates.loading && !certificates.error && certificates.data && (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {certificates.data.map((cert, index) => (
-              <motion.div
-                key={cert.credentialId || index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Card className="bg-gray-800/60 border-gray-700 h-full hover:border-gray-500 transition-all duration-300">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center">
-                        <Award className="h-5 w-5 text-blue-400 mr-2" />
-                        <h3 className="font-semibold text-lg text-white">{cert.name}</h3>
-                      </div>
-                      {cert.url && (
-                        <a
-                          href={cert.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-400 hover:text-blue-300 transition-colors"
-                          aria-label={`View certificate: ${cert.name}`}
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                        </a>
-                      )}
-                    </div>
-
-                    <div className="space-y-2 mb-4">
-                      <p className="text-gray-400 text-sm">{cert.authority}</p>
-                      <p className="text-gray-500 text-sm">{cert.formattedDate || `Issued ${cert.issueYear}`}</p>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2">
-                      {/* Extract skills from certificate name */}
-                      {extractSkills(cert.name).map((skill, idx) => (
-                        <Badge
-                          key={idx}
-                          variant="secondary"
-                          className="bg-blue-500/10 text-blue-400 border border-blue-500/20"
-                        >
-                          {skill}
-                        </Badge>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        )}
-
-        {/* Fallback for empty data */}
-        {!certificates.loading && !certificates.error && (!certificates.data || certificates.data.length === 0) && (
-          <div className="text-center py-10">
-            <p className="text-gray-400 mb-4">No certificates found</p>
-          </div>
-        )}
+                <div className="flex flex-col gap-3 mt-auto">
+                  <div className="flex items-center gap-2 text-white text-[10px] tracking-[0.2em] uppercase font-bold">
+                    <CheckCircle2 size={12} className="text-white" /> {cert.issuer}
+                  </div>
+                  <div className="flex items-center gap-2 text-white text-[10px] tracking-[0.2em] uppercase font-bold">
+                    <Calendar size={12} className="text-white" /> {cert.date}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </Container>
     </Section>
   );

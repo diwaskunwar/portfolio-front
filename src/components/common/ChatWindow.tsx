@@ -323,21 +323,15 @@ export const ChatWindow = () => {
       {!isOpen ? (
         <Button
           onClick={() => setIsOpen(true)}
-          className="rounded-full w-16 h-16 flex items-center justify-center transition-all hover:scale-110 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 hover:from-blue-700 hover:via-indigo-600 hover:to-purple-700 shadow-lg hover:shadow-xl border-0 group"
-
-       >
+          className="rounded-full w-16 h-16 flex items-center justify-center transition-all hover:scale-110 bg-black text-white hover:bg-white hover:text-black shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] border border-white/20 group"
+        >
           <div className="relative">
-                    {/* <MessageCircle size={50} className="text-blue-600" strokeWidth={2.5} /> */}
-                  <MessageCircle style={{ color: 'white', strokeWidth: 2,width: 30, height: 30 }} size={30}/>
-
-
-            {/* <MessageCircle className="text-white w-8 h-8 group-hover:scale-110 transition-all duration-300" /> */}
-            {/* <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center animate-pulse">1</span> */}
+            <MessageCircle className="w-8 h-8 transition-colors duration-300" strokeWidth={2} />
           </div>
         </Button>
       ) : (
-        <Card className="w-[490px] h-[550px] flex flex-col shadow-xl animate-in fade-in duration-300 slide-in-from-bottom-5">
-          <div className="p-4 border-b flex justify-between items-center bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 text-white rounded-t-lg shadow-md">
+        <Card className="w-[490px] h-[550px] flex flex-col shadow-2xl animate-in fade-in duration-300 slide-in-from-bottom-5 bg-black border border-white/10 rounded-2xl overflow-hidden">
+          <div className="p-4 border-b flex justify-between items-center bg-black text-white rounded-t-lg shadow-md border-white/10">
             <div className="flex items-center gap-2">
               <div className="bg-white/20 p-2 rounded-full">
                 <MessageCircle size={20} className="text-white animate-pulse-slow" />
@@ -365,25 +359,25 @@ export const ChatWindow = () => {
               </Button>
             </div>
           </div>
-          <div className="flex-1 p-4 overflow-y-auto bg-gradient-to-b from-blue-50 to-gray-50 relative">
+          <div className="flex-1 p-4 overflow-y-auto bg-black relative custom-scrollbar">
             {isLoadingHistory && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-blue-50 to-gray-50 bg-opacity-90 z-10">
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-90 z-10">
                 <div className="flex flex-col items-center">
-                  <RefreshCw className="h-8 w-8 text-blue-500 animate-spin mb-2" />
-                  <p className="text-sm text-gray-600">Loading messages...</p>
+                  <RefreshCw className="h-8 w-8 text-white animate-spin mb-2" />
+                  <p className="text-sm text-white/60">Loading messages...</p>
                 </div>
               </div>
             )}
             {messages.length === 0 && !isLoadingHistory ? (
-              <div className="text-center text-gray-600 p-6 bg-white rounded-lg shadow-sm mb-4">
+              <div className="text-center text-white/80 p-6 bg-white/[0.03] rounded-lg border border-white/10 shadow-sm mb-4">
                 <p className="text-lg font-medium mb-2">Welcome, fellow developer!</p>
                 <p className="text-sm opacity-80">
                   This is where we'd normally put some witty developer humor, but we're too busy fixing bugs that worked fine in development.
                 </p>
-                <div className="mt-4 p-3 bg-gray-100 rounded-md text-left font-mono text-xs">
+                <div className="mt-4 p-3 bg-white/5 rounded-md text-left font-mono text-xs border border-white/10">
                   <code>console.log('Why is this not working?');</code>
                 </div>
-                <p className="text-xs text-gray-500 mt-4">
+                <p className="text-xs text-white/40 mt-4">
                   Note: By using this chat, your device information will be collected for analytics and support purposes.
                 </p>
               </div>
@@ -438,8 +432,8 @@ export const ChatWindow = () => {
                     <div
                       key={message.id}
                       className={`p-4 mb-4 shadow-sm transition-all duration-300 hover:shadow-md animate-fade-in ${message.sender === 'assistant' ?
-                        'bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-lg rounded-tl-none mr-12 hover:from-blue-100 hover:to-indigo-100' :
-                        'bg-gradient-to-br from-white to-gray-50 border border-gray-100 rounded-lg rounded-tr-none ml-12 hover:from-gray-50 hover:to-white'}`}
+                        'bg-white/[0.05] border border-white/10 rounded-lg rounded-tl-none mr-12 hover:bg-white/[0.08]' :
+                        'bg-white text-black border border-white/20 rounded-lg rounded-tr-none ml-12'}`}
                     >
                       <div className="flex items-start">
                         <div className={`${message.sender === 'assistant' ? 'bg-gradient-to-br from-blue-500 to-indigo-600' : 'bg-gradient-to-br from-gray-700 to-gray-900'} text-white p-2 rounded-full mr-3 shadow-md transition-all duration-300 hover:shadow-lg hover:scale-105`}>
@@ -448,11 +442,11 @@ export const ChatWindow = () => {
                             <User size={16} />}
                         </div>
                         <div className="flex-1">
-                          <p className={`text-sm font-medium ${message.sender === 'assistant' ? 'text-blue-800' : 'text-gray-800'}`}>
-                            {message.sender === 'assistant' ? 'Assistant' : 'You'}
+                          <p className={`text-xs uppercase tracking-widest font-bold mb-1 ${message.sender === 'assistant' ? 'text-white/40' : 'text-black/40'}`}>
+                            {message.sender === 'assistant' ? 'AI System' : 'User'}
                           </p>
                           {message.sender === 'assistant' ? (
-                            <div className="text-sm text-gray-700 mt-1 markdown-content">
+                            <div className="text-sm text-white/90 mt-1 markdown-content">
                               <ReactMarkdown
                                 remarkPlugins={[remarkGfm]}
                                 rehypePlugins={[rehypeRaw]}
@@ -465,21 +459,21 @@ export const ChatWindow = () => {
                                   ul: (props) => <ul className="list-disc pl-5 my-2" {...props} />,
                                   ol: (props) => <ol className="list-decimal pl-5 my-2" {...props} />,
                                   li: (props) => <li className="mb-1" {...props} />,
-                                  a: (props) => <a className="text-blue-500 hover:underline" {...props} />,
+                                  a: (props) => <a className="text-white underline hover:no-underline" {...props} />,
                                   code: (props) => {
-                                    const {children, className, node, ...rest} = props;
+                                    const { children, className, node, ...rest } = props;
                                     const match = /language-(\w+)/.exec(className || '');
                                     const language = match ? match[1] : '';
                                     const isInline = !match && !className;
 
                                     return isInline ? (
-                                      <code className="bg-gray-100 px-1 py-0.5 rounded text-sm font-mono" {...rest}>{children}</code>
+                                      <code className="bg-white/10 px-1 py-0.5 rounded text-sm font-mono text-white" {...rest}>{children}</code>
                                     ) : (
                                       <SyntaxHighlighter
                                         style={vscDarkPlus}
                                         language={language}
                                         PreTag="div"
-                                        className="rounded-md my-2 overflow-x-auto"
+                                        className="rounded-md my-2 overflow-x-auto border border-white/10"
                                         showLineNumbers
                                         wrapLines
                                       >
@@ -487,18 +481,18 @@ export const ChatWindow = () => {
                                       </SyntaxHighlighter>
                                     );
                                   },
-                                  pre: ({children}) => <>{children}</>,
-                                  blockquote: (props) => <blockquote className="border-l-4 border-gray-300 pl-4 italic my-2" {...props} />,
-                                  table: (props) => <table className="border-collapse border border-gray-300 my-2" {...props} />,
-                                  th: (props) => <th className="border border-gray-300 px-4 py-2 bg-gray-100" {...props} />,
-                                  td: (props) => <td className="border border-gray-300 px-4 py-2" {...props} />,
+                                  pre: ({ children }) => <>{children}</>,
+                                  blockquote: (props) => <blockquote className="border-l-4 border-white/20 pl-4 italic my-2" {...props} />,
+                                  table: (props) => <table className="border-collapse border border-white/20 my-2" {...props} />,
+                                  th: (props) => <th className="border border-white/20 px-4 py-2 bg-white/5" {...props} />,
+                                  td: (props) => <td className="border border-white/20 px-4 py-2" {...props} />,
                                 }}
                               >
                                 {message.content}
                               </ReactMarkdown>
                             </div>
                           ) : (
-                            <p className="text-sm text-gray-700 mt-1 whitespace-pre-wrap">
+                            <p className="text-sm text-black font-medium mt-1 whitespace-pre-wrap">
                               {message.content}
                             </p>
                           )}
@@ -516,10 +510,10 @@ export const ChatWindow = () => {
               </>
             )}
           </div>
-          <form onSubmit={handleSendMessage} className="p-5 border-t bg-gradient-to-r from-blue-50 to-indigo-50">
+          <form onSubmit={handleSendMessage} className="p-5 border-t border-white/10 bg-black">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <Search className="h-4 w-4 text-blue-400" />
+                <Search className="h-4 w-4 text-white/40" />
               </div>
               <input
                 ref={inputRef}
@@ -528,21 +522,21 @@ export const ChatWindow = () => {
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder={currentPlaceholder}
                 disabled={isSending}
-                className="w-full pl-10 pr-12 py-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm font-mono bg-white shadow-sm hover:shadow-md focus:shadow-md"
+                className="w-full pl-10 pr-12 py-3 border border-white/10 rounded-lg focus:ring-1 focus:ring-white focus:border-white transition-all text-sm font-mono bg-white/5 text-white shadow-sm hover:shadow-md focus:shadow-md"
                 style={{ minHeight: '52px' }}
               />
               <button
                 type="submit"
                 disabled={isSending || !inputValue.trim()}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-500 hover:text-blue-700 transition-all disabled:text-gray-400 disabled:cursor-not-allowed hover:scale-110"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-white hover:scale-125 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 {isSending ?
                   <Loader2 className="h-5 w-5 animate-spin" /> :
-                  <Send className="h-5 w-5 transition-transform duration-300 transform group-hover:translate-x-1" />}
+                  <Send className="h-5 w-5" />}
               </button>
             </div>
-            <div className="mt-3 text-xs text-blue-600 text-center flex items-center justify-center gap-1 animate-pulse">
-              {isSending ? "Sending message..." : "Type your message and press Enter to send"}
+            <div className="mt-3 text-[10px] tracking-[0.2em] uppercase text-white/40 text-center flex items-center justify-center gap-1">
+              {isSending ? "Syncing..." : "Ready for input"}
             </div>
           </form>
         </Card>

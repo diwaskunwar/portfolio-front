@@ -1,164 +1,137 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { motion } from 'framer-motion';
-import { Code, Filter, Loader2 } from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback, memo, lazy, Suspense } from 'react';
+import { Code, Loader2, ArrowRight } from 'lucide-react';
 import Section from '@/components/common/Section';
 import Container from '@/components/common/Container';
 import RepositoryCard from '@/components/github/RepositoryCard';
-import { Button } from '@/components/ui/button';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { GitHubRepo } from '@/types/github';
 import { useGithubData } from '@/hooks/useGithubData';
 
+// Lazy load the particle background for better performance
+const ParticleBackground = lazy(() => import('@/components/effects/ParticleBackground'));
+
 const Projects = () => {
-  // State for view type (top or all)
   const [viewType, setViewType] = useState<'top' | 'all'>('top');
-
-  // Get GitHub data from custom hook
-  const { repos, fetchTopRepos, fetchAllRepos, fetchRepos } = useGithubData(false);
-
-  // State for repositories to display
+  const { repos, fetchTopRepos, fetchAllRepos } = useGithubData(false);
   const [displayedRepos, setDisplayedRepos] = useState<GitHubRepo[]>([]);
-
-  // Track if initial fetch has been done
   const initialFetchDoneRef = useRef<boolean>(false);
   const lastViewTypeRef = useRef<string>(viewType);
 
-  // Memoized fetch function to prevent infinite loops
   const fetchRepositories = useCallback(() => {
-    console.log('Fetching repositories for viewType:', viewType);
     if (viewType === 'top') {
-      fetchTopRepos(8);
+      fetchTopRepos(6);
     } else {
       fetchAllRepos();
     }
     lastViewTypeRef.current = viewType;
   }, [viewType, fetchTopRepos, fetchAllRepos]);
 
-  // Initial fetch and fetch on view type change
   useEffect(() => {
-    // Only fetch if view type changed or initial fetch hasn't been done
     if (!initialFetchDoneRef.current || lastViewTypeRef.current !== viewType) {
       fetchRepositories();
       initialFetchDoneRef.current = true;
     }
   }, [viewType, fetchRepositories]);
 
-  // Update displayed repos when repos data changes
   useEffect(() => {
-    console.log('Repos data changed:', repos.data);
     if (repos.data) {
       setDisplayedRepos(repos.data);
     }
   }, [repos.data]);
 
   return (
-    <Section id="projects" className="bg-gray-900 text-white">
-      <Container className="py-20">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+    <Section id="projects" className="relative overflow-hidden min-h-screen">
+      <Container className="py-24 relative z-10">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <span className="text-xs tracking-[0.3em] text-white uppercase mb-4 block font-bold">Portfolio</span>
+          <h2 className="text-4xl md:text-6xl font-extralight mb-6 text-white tracking-tight">
             Projects
           </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            A showcase of my GitHub repositories and projects I've worked on
+          <div className="w-24 h-px bg-white/40 mx-auto mb-6"></div>
+          <p className="text-white/80 max-w-lg mx-auto text-base font-light">
+            Open source work and personal projects
           </p>
-        </motion.div>
-
-        {/* Toggle between Top and All repositories */}
-        <div className="flex justify-center mb-8">
-          <ToggleGroup type="single" value={viewType} onValueChange={(value) => value && setViewType(value as 'top' | 'all')}>
-            <ToggleGroupItem value="top" aria-label="Show top repositories" className="text-sm">
-              Top Repositories
-            </ToggleGroupItem>
-            <ToggleGroupItem value="all" aria-label="Show all repositories" className="text-sm">
-              All Repositories
-            </ToggleGroupItem>
-          </ToggleGroup>
         </div>
 
-        {/* Loading state - only show if no data exists */}
+        {/* Minimal Toggle */}
+        <div className="flex justify-center mb-12">
+          <div className="inline-flex border border-white/20 rounded-full backdrop-blur-sm overflow-hidden">
+            <button
+              onClick={() => setViewType('top')}
+              className={`px-8 py-3 text-sm tracking-wider transition-all duration-300 font-bold ${viewType === 'top'
+                ? 'bg-white text-black'
+                : 'bg-transparent text-white/50 hover:text-white'
+                }`}
+            >
+              FEATURED
+            </button>
+            <button
+              onClick={() => setViewType('all')}
+              className={`px-8 py-3 text-sm tracking-wider transition-all duration-300 font-bold ${viewType === 'all'
+                ? 'bg-white text-black'
+                : 'bg-transparent text-white/50 hover:text-white'
+                }`}
+            >
+              ALL
+            </button>
+          </div>
+        </div>
+
+        {/* Loading */}
         {repos.loading && (!displayedRepos || displayedRepos.length === 0) && (
-          <div className="flex justify-center items-center py-20">
-            <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
-            <span className="ml-2 text-gray-400">Loading repositories...</span>
+          <div className="flex justify-center items-center py-24">
+            <Loader2 className="h-6 w-6 text-white animate-spin" />
           </div>
         )}
 
-        {/* Error state */}
+        {/* Error */}
         {repos.error && (
-          <div className="text-center py-10">
-            <p className="text-red-500 mb-4">Failed to load repositories: {repos.error}</p>
-            <Button
-              variant="outline"
-              onClick={fetchRepositories}
-            >
-              Try Again
-            </Button>
+          <div className="text-center py-16">
+            <p className="text-white/60 mb-6 text-sm font-medium">Unable to load repositories</p>
+            <button onClick={fetchRepositories} className="text-white text-sm border-b border-white pb-1 hover:text-white/70 hover:border-white/70 transition-colors">
+              Retry
+            </button>
           </div>
         )}
 
-        {/* No repositories found state */}
+        {/* Empty */}
         {!repos.loading && !repos.error && (!displayedRepos || displayedRepos.length === 0) && (
-          <div className="text-center py-10">
-            <p className="text-gray-400 mb-4">No repositories found</p>
-            <Button
-              variant="outline"
-              onClick={fetchRepositories}
-            >
-              Refresh
-            </Button>
+          <div className="text-center py-16">
+            <p className="text-white/60 text-sm font-medium">No repositories found</p>
           </div>
         )}
 
-        {/* Repositories grid */}
+        {/* Grid */}
         {!repos.error && displayedRepos && displayedRepos.length > 0 && (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {displayedRepos.map((repo, index) => (
                 <RepositoryCard key={repo.name} repo={repo} index={index} />
               ))}
             </div>
 
-            {/* View more button for top repositories */}
-            {viewType === 'top' && displayedRepos.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="mt-10 text-center"
-              >
-                <Button
-                  variant="outline"
-                  className="bg-gray-800 border-gray-700 hover:bg-gray-700 text-gray-300"
+            {/* Actions */}
+            <div className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-6">
+              {viewType === 'top' && (
+                <button
                   onClick={() => setViewType('all')}
+                  className="group flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm tracking-wider font-bold"
                 >
-                  View All Repositories
-                </Button>
-              </motion.div>
-            )}
+                  VIEW ALL PROJECTS
+                  <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                </button>
+              )}
 
-            {/* GitHub profile link */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              className="mt-10 text-center"
-            >
-              <Button
-                variant="default"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                asChild
+              <a
+                href="https://github.com/witcher9591"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-8 py-3 bg-white text-black text-sm tracking-wider hover:bg-gray-200 transition-colors rounded-full"
               >
-                <a href="https://github.com/witcher9591" target="_blank" rel="noopener noreferrer">
-                  <Code className="mr-2 h-4 w-4" />
-                  View GitHub Profile
-                </a>
-              </Button>
-            </motion.div>
+                <Code className="h-4 w-4" />
+                GITHUB PROFILE
+              </a>
+            </div>
           </>
         )}
       </Container>
@@ -166,4 +139,4 @@ const Projects = () => {
   );
 };
 
-export default Projects;
+export default memo(Projects);

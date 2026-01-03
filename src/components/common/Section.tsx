@@ -12,8 +12,8 @@ interface SectionProps {
 const Section = forwardRef<HTMLDivElement, SectionProps>(
   ({ id, className, children }, ref) => {
     const [inViewRef, inView] = useInView({
-      threshold: 0.3,
-      triggerOnce: false,
+      threshold: 0.1, // Reduced threshold for smoother entry
+      triggerOnce: true, // Only animate in once
     });
 
     const setRefs = (node: HTMLDivElement) => {
@@ -31,8 +31,9 @@ const Section = forwardRef<HTMLDivElement, SectionProps>(
         id={id}
         ref={setRefs}
         className={cn(
-          'min-h-screen w-full flex flex-col items-center justify-center transition-opacity duration-700',
-          inView ? 'opacity-100' : 'opacity-0',
+          'min-h-screen w-full flex flex-col items-center justify-center transition-all duration-1000 ease-out',
+          inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10',
+          'bg-transparent', // Always transparent to show global background
           className
         )}
       >
