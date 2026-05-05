@@ -1,7 +1,7 @@
 {
   "profile": {
     "name": "Diwas Kunwar",
-    "headline": "ML Engineer",
+    "headline": "AI/ML Engineer",
     "location": "Lalitpur District, Nepal",
     "address": "Nakhipot-14, lalitpur",
     "industry": "Computer Software",
@@ -24,6 +24,23 @@
   "experience": {
     "companies": [
       {
+        "name": "Cantor Dust Analytics Pvt Ltd",
+        "title": "AI/ML Engineer",
+        "employmentType": "Full-time",
+        "location": "Nepal",
+        "dateRange": {
+          "start": {
+            "month": 3,
+            "year": 2026
+          },
+          "end": null
+        },
+        "logo": "",
+        "companyUrl": "",
+        "companySize": "",
+        "industry": "Computer Software"
+      },
+      {
         "name": "Next AI",
         "title": "ML Engineer",
         "employmentType": "Full-time",
@@ -33,7 +50,10 @@
             "month": 6,
             "year": 2024
           },
-          "end": null
+          "end": {
+            "month": 3,
+            "year": 2026
+          }
         },
         "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQGO38-A32ohIQ/company-logo_400_400/0/1700313257521/next_ai_asia_logo",
         "companyUrl": "https://www.linkedin.com/company/next-ai-asia/",

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Github, Linkedin, Mail, Twitter } from 'lucide-react';
+import { Github, Linkedin, Mail } from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -11,26 +11,44 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="text-center md:text-left">
             <h3 className="text-xl font-extralight text-white tracking-[0.2em] mb-2 uppercase">DIWAS KUNWAR</h3>
-            <p className="text-white/80 text-xs tracking-[0.2em] font-light uppercase">Machine Learning Engineer & Backend Developer</p>
+            <p className="text-white/80 text-xs tracking-[0.2em] font-light uppercase">AI/ML Engineer &amp; Backend Developer</p>
           </div>
 
-          <div className="flex gap-8">
-            {[
-              { icon: Github, href: "https://github.com/witcher9591" },
-              { icon: Linkedin, href: "https://linkedin.com" },
-              { icon: Mail, href: "mailto:contact@diwas.me" },
-              { icon: Twitter, href: "https://twitter.com" }
-            ].map((social, i) => (
-              <a
-                key={i}
-                href={social.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white hover:text-white transition-all duration-300 hover:scale-125"
-              >
-                <social.icon size={24} strokeWidth={1} />
-              </a>
-            ))}
+          <div className="flex gap-8 items-center">
+            <a
+              href="https://github.com/diwaskunwar"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white hover:text-white transition-all duration-300 hover:scale-125"
+              title="GitHub"
+            >
+              <Github size={24} strokeWidth={1} />
+            </a>
+            <a
+              href="https://www.linkedin.com/in/diwas-kunwar/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white hover:text-white transition-all duration-300 hover:scale-125"
+              title="LinkedIn"
+            >
+              <Linkedin size={24} strokeWidth={1} />
+            </a>
+            <a
+              href="https://huggingface.co/diwaskunwar10"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-all duration-300 hover:scale-125 flex items-center"
+              title="Hugging Face"
+            >
+              <img src="/hf-logo.svg" alt="Hugging Face" className="w-6 h-6" />
+            </a>
+            <a
+              href="mailto:diwas.kunwar@gmail.com"
+              className="text-white hover:text-white transition-all duration-300 hover:scale-125"
+              title="Email"
+            >
+              <Mail size={24} strokeWidth={1} />
+            </a>
           </div>
         </div>
 

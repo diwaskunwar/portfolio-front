@@ -15,10 +15,21 @@ interface Experience {
 
 const experiences: Experience[] = [
   {
+    title: 'AI/ML Engineer',
+    company: 'Cantor Dust Analytics Pvt Ltd',
+    location: 'Nepal',
+    period: 'MAR 2026 - PRESENT',
+    description: [
+      'Developing AI/ML solutions and analytics pipelines for actionable data-driven insights.',
+      'Building scalable intelligent systems and backend workflows for production environments.'
+    ],
+    skills: ['Python', 'Machine Learning', 'LLMs', 'FastAPI', 'Data Analytics', 'Docker']
+  },
+  {
     title: 'ML Engineer',
     company: 'Next AI',
     location: 'Kathmandu, Nepal',
-    period: 'JUN 2024 - PRESENT',
+    period: 'JUN 2024 - MAR 2026',
     description: [
       'Developed advanced AI solutions and ML models including RAG-based systems.',
       'Optimized backend services with FastAPI and MongoDB for production scale.'
