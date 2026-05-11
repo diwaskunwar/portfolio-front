@@ -100,8 +100,8 @@
   "education": [
     {
       "schoolName": "Kathmandu College of Technology",
-      "degreeName": "Bachelor's degree",
-      "fieldOfStudy": "Computer Science",
+      "degreeName": "Bachelor's degree (BCA - TU)",
+      "fieldOfStudy": "Computer Applications",
       "dateRange": {
         "start": {
           "month": 10,
@@ -114,6 +114,11 @@
       },
       "schoolLogo": "https://media.licdn.com/dms/image/v2/D4D0BAQF38XIdWjS1kg/company-logo_400_400/0/1687692787682",
       "schoolUrl": "https://www.linkedin.com/school/college-of-agriculture-janjgir/"
+    },
+    {
+      "schoolName": "Caspian Valley College, Kumaripati",
+      "degreeName": "High School",
+      "fieldOfStudy": "Management - Computer Science"
     }
   ],
   "skills": [
@@ -214,7 +219,7 @@
   "stats": {
     "totalYearsExperience": 3,
     "numberOfCompanies": 3,
-    "numberOfEducations": 1,
+    "numberOfEducations": 2,
     "numberOfSkills": 20,
     "numberOfCertifications": 3,
     "numberOfLanguages": 0

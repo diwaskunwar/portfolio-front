@@ -14,7 +14,7 @@ const slogans = [
   "Advancing LLM Infrastructures"
 ];
 
-const DIRECTIVE_TEXT = '"Building and Innovating intelligent systems that blend innovation with impact. Passionate about LLMs and high-performance backend architecture."';
+const DIRECTIVE_TEXT = '"Passionate about solving real-world problems through AI, I build tailored machine learning systems and scalable backend solutions that are innovative, practical, and impact-driven."';
 
 const Hero = () => {
   const { profileData, loading } = useProfile();

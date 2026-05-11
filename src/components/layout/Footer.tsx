@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Github, Linkedin, Mail } from 'lucide-react';
+import { Github, Linkedin, Mail, BotIcon } from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -40,7 +40,8 @@ const Footer = () => {
               className="transition-all duration-300 hover:scale-125 flex items-center"
               title="Hugging Face"
             >
-              <img src="/hf-logo.svg" alt="Hugging Face" className="w-6 h-6" />
+              {/* <img src="/hf-logo.svg" alt="Hugging Face" className="w-6 h-6" /> */}
+              <BotIcon size={24} strokeWidth={1} />
             </a>
             <a
               href="mailto:diwas.kunwar@gmail.com"

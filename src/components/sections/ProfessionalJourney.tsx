@@ -2,7 +2,7 @@
 import React from 'react';
 import Section from '@/components/common/Section';
 import Container from '@/components/common/Container';
-import { Briefcase, MapPin, Calendar, ArrowUpRight } from 'lucide-react';
+import { Briefcase, MapPin, Calendar, ArrowUpRight, GraduationCap } from 'lucide-react';
 
 interface Experience {
   title: string;
@@ -11,6 +11,14 @@ interface Experience {
   period: string;
   description: string[];
   skills: string[];
+}
+
+interface Education {
+  degree: string;
+  school: string;
+  location: string;
+  period: string;
+  focus: string;
 }
 
 const experiences: Experience[] = [
@@ -46,6 +54,23 @@ const experiences: Experience[] = [
       'Implemented secure authentication systems and API development tasks.'
     ],
     skills: ['Python', 'Selenium', 'Scrapy', 'FastAPI', 'Pandas', 'Git']
+  }
+];
+
+const educations: Education[] = [
+  {
+    degree: "Bachelor's Degree (BCA - TU)",
+    school: 'Kathmandu College of Technology',
+    location: 'Bhaktapur, Nepal',
+    period: 'Completed',
+    focus: 'Computer Applications'
+  },
+  {
+    degree: 'High School',
+    school: 'Caspian Valley College, Kumaripati',
+    location: 'Lalitpur, Nepal',  
+    period: 'Completed',
+    focus: 'Management - Computer Science'
   }
 ];
 
@@ -99,6 +124,42 @@ const ProfessionalJourney = () => {
                   </span>
                 ))}
               </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-center mt-28 mb-20">
+          <span className="text-xs tracking-[0.4em] text-white uppercase mb-4 block font-bold">Education</span>
+          <h3 className="text-3xl md:text-5xl font-extralight text-white tracking-tighter mb-4">
+            Education Journey
+          </h3>
+          <div className="w-20 h-px bg-white/40 mx-auto"></div>
+        </div>
+
+        <div className="max-w-4xl mx-auto border-l border-white/20 pl-8 md:pl-20 space-y-16 relative">
+          {educations.map((edu, index) => (
+            <div key={index} className="relative group animate-fade-in" style={{ animationDelay: `${index * 150}ms` }}>
+              <div className="absolute -left-[37px] md:-left-[85px] top-0 w-3 h-3 rounded-full bg-black border border-white/60 group-hover:bg-white group-hover:border-white transition-all duration-500 scale-100 group-hover:scale-150 shadow-[0_0_10px_rgba(255,255,255,0.2)]"></div>
+
+              <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
+                <div>
+                  <h4 className="text-2xl md:text-3xl font-light text-white tracking-tight group-hover:translate-x-1 transition-transform inline-flex items-center gap-2">
+                    {edu.degree}
+                    <ArrowUpRight className="w-5 h-5 text-white/60 group-hover:text-white transition-colors" />
+                  </h4>
+                  <div className="flex flex-wrap items-center gap-5 text-white text-[11px] tracking-widest uppercase mt-3 font-bold">
+                    <span className="flex items-center gap-2 text-white"><GraduationCap size={14} className="text-white" /> {edu.school}</span>
+                    <span className="flex items-center gap-2 text-white"><MapPin size={14} className="text-white" /> {edu.location}</span>
+                  </div>
+                </div>
+                <div className="text-white text-[11px] tracking-[0.3em] font-bold flex items-center gap-2 mt-2 md:mt-0 uppercase">
+                  <Calendar size={14} className="text-white" /> {edu.period}
+                </div>
+              </div>
+
+              <p className="text-white font-light leading-relaxed text-base max-w-2xl">
+                Focus: {edu.focus}
+              </p>
             </div>
           ))}
         </div>
