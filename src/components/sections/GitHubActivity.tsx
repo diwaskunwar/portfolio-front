@@ -7,6 +7,7 @@ import Reveal, { TextReveal } from '@/components/common/Reveal';
 import CountUp from '@/components/common/CountUp';
 import ContributionsChart from './ContributionsChart';
 import { useGithubData } from '@/hooks/useGithubData';
+import { GITHUB_URL } from '@/lib/links';
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -121,7 +122,7 @@ const GitHubActivity = () => {
 
         <Reveal>
           <a
-            href="https://github.com/diwaskunwar"
+            href={GITHUB_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2.5 rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-90 active:translate-y-px"

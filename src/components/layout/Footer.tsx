@@ -1,10 +1,17 @@
 import React from 'react';
-import { Github, Linkedin, Mail } from 'lucide-react';
+import { Github, Linkedin, Mail, Download } from 'lucide-react';
+import {
+  RESUME_DOWNLOAD_URL,
+  GITHUB_URL,
+  LINKEDIN_URL,
+  HUGGINGFACE_URL,
+  EMAIL_URL,
+} from '@/lib/links';
 
 const SOCIALS = [
-  { href: 'https://github.com/diwaskunwar', label: 'GitHub', Icon: Github },
-  { href: 'https://www.linkedin.com/in/diwas-kunwar/', label: 'LinkedIn', Icon: Linkedin },
-  { href: 'mailto:diwas.kuwar@gmail.com', label: 'Email', Icon: Mail },
+  { href: GITHUB_URL, label: 'GitHub', Icon: Github },
+  { href: LINKEDIN_URL, label: 'LinkedIn', Icon: Linkedin },
+  { href: EMAIL_URL, label: 'Email', Icon: Mail },
 ] as const;
 
 const Footer = () => {
@@ -35,13 +42,27 @@ const Footer = () => {
               </a>
             ))}
             <a
-              href="https://huggingface.co/diwaskunwar10"
+              href={HUGGINGFACE_URL}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Hugging Face"
               className="rounded-full p-2.5 opacity-60 grayscale transition-opacity duration-200 hover:opacity-100"
             >
               <img src="/hf-logo.svg" alt="" aria-hidden="true" className="h-5 w-5" />
+            </a>
+
+            <a
+              href={RESUME_DOWNLOAD_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group ml-3 inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-semibold text-foreground transition-colors duration-200 hover:border-foreground/35 hover:bg-surface-raised"
+            >
+              <Download
+                size={15}
+                strokeWidth={1.75}
+                className="transition-transform duration-300 group-hover:translate-y-0.5 motion-reduce:transition-none"
+              />
+              Résumé
             </a>
           </div>
         </div>

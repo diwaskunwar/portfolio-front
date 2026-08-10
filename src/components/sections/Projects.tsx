@@ -5,6 +5,7 @@ import Container from '@/components/common/Container';
 import RepositoryCard from '@/components/github/RepositoryCard';
 import { GitHubRepo } from '@/types/github';
 import { useGithubData } from '@/hooks/useGithubData';
+import { GITHUB_URL } from '@/lib/links';
 
 const Projects = () => {
   const [viewType, setViewType] = useState<'top' | 'all'>('top');
@@ -117,7 +118,7 @@ const Projects = () => {
             {/* Actions */}
             <div className="mt-14 flex flex-col items-start gap-6 sm:flex-row sm:items-center">
               <a
-                href="https://github.com/diwaskunwar"
+                href={GITHUB_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-90 active:translate-y-px"

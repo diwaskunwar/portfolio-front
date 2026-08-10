@@ -12,6 +12,7 @@ import {
   X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { scrollToSection } from '@/lib/scrollToSection';
 
 /* Order mirrors the page: career, what shipped from it, credentials,
    open source, then the person. */
@@ -100,12 +101,7 @@ const Navigation = () => {
   }, [isMenuOpen]);
 
   const goTo = (id: string) => {
-    // Falls back to the reserved placeholder when the section has not mounted
-    // yet, so a nav click is never a no-op.
-    const target =
-      document.getElementById(id) ??
-      document.querySelector(`[data-section-placeholder="${id}"]`);
-    target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    scrollToSection(id);
     setIsMenuOpen(false);
   };
 

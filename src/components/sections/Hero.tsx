@@ -1,18 +1,26 @@
 import { motion, useReducedMotion, type Variants } from 'framer-motion';
-import { Github, Linkedin, Mail, ArrowRight } from 'lucide-react';
+import { Github, Linkedin, Mail, ArrowRight, Download } from 'lucide-react';
+import {
+  RESUME_DOWNLOAD_URL,
+  GITHUB_URL,
+  LINKEDIN_URL,
+  HUGGINGFACE_URL,
+  EMAIL_URL,
+} from '@/lib/links';
 import { useProfile } from '@/store/ProfileContext';
 import Section from '@/components/common/Section';
 import Container from '@/components/common/Container';
 import BlockPortrait from '@/components/effects/BlockPortrait';
 import MagneticLink from '@/components/common/MagneticLink';
 import { useIsBooted } from '@/lib/bootState';
+import { scrollToSection } from '@/lib/scrollToSection';
 
 const PORTRAIT = '/diwas.webp';
 
 const SOCIALS = [
-  { href: 'https://github.com/diwaskunwar', label: 'GitHub', Icon: Github },
-  { href: 'https://www.linkedin.com/in/diwas-kunwar/', label: 'LinkedIn', Icon: Linkedin },
-  { href: 'mailto:diwas.kuwar@gmail.com', label: 'Email', Icon: Mail },
+  { href: GITHUB_URL, label: 'GitHub', Icon: Github },
+  { href: LINKEDIN_URL, label: 'LinkedIn', Icon: Linkedin },
+  { href: EMAIL_URL, label: 'Email', Icon: Mail },
 ] as const;
 
 /* The full span of the work, not just the retrieval slice. */
@@ -150,11 +158,18 @@ const Hero = () => {
               className="mt-10 flex flex-col items-stretch gap-5 sm:flex-row sm:items-center"
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                {/* Points at the journey, not the repositories: the story
+                    starts there and the rest of the page follows from it. */}
                 <MagneticLink
-                  href="#projects"
+                  href="#professional-journey"
+                  onClick={(e) => {
+                    // The href stays for middle-click and copy-link, but the
+                    // section mounts lazily, so a native anchor jump can miss.
+                    if (scrollToSection('professional-journey')) e.preventDefault();
+                  }}
                   className="group inline-flex items-center justify-center whitespace-nowrap rounded-full bg-accent px-7 py-3.5 text-sm font-semibold text-accent-foreground"
                 >
-                  View work
+                  Walk my journey
                   <ArrowRight
                     size={16}
                     strokeWidth={2}
@@ -163,10 +178,26 @@ const Hero = () => {
                 </MagneticLink>
 
                 <a
-                  href="mailto:diwas.kuwar@gmail.com"
+                  href={EMAIL_URL}
                   className="inline-flex items-center justify-center whitespace-nowrap rounded-full border border-border px-7 py-3.5 text-sm font-semibold text-foreground transition-colors duration-200 hover:border-foreground/35 hover:bg-surface-raised active:translate-y-px"
                 >
                   Get in touch
+                </a>
+
+                {/* Tertiary on purpose: recruiters look for it, but it should
+                    not compete with the two primary actions. */}
+                <a
+                  href={RESUME_DOWNLOAD_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center justify-center gap-2 whitespace-nowrap px-2 py-3.5 text-sm font-semibold text-muted-foreground transition-colors duration-200 hover:text-foreground"
+                >
+                  <Download
+                    size={16}
+                    strokeWidth={1.75}
+                    className="transition-transform duration-300 group-hover:translate-y-0.5 motion-reduce:transition-none"
+                  />
+                  Résumé
                 </a>
               </div>
 
@@ -186,7 +217,7 @@ const Hero = () => {
                   </a>
                 ))}
                 <a
-                  href="https://huggingface.co/diwaskunwar10"
+                  href={HUGGINGFACE_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Hugging Face"
