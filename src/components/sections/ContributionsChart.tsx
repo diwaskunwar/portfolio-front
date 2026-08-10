@@ -1,75 +1,93 @@
-
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { ContributionDay } from '@/services/githubClient';
+import { buildGreetingCalendar } from '@/lib/greetingCalendar';
 
 interface ContributionsChartProps {
   data?: ContributionDay[];
+  /** Drawn when no data is supplied. */
+  greeting?: string;
 }
 
-const ContributionsChart = ({ data }: ContributionsChartProps) => {
-  // If no data, generate placeholder data with higher intensity for visuals
-  const chartData = data && data.length > 0 ? data : Array.from({ length: 52 * 7 }, (_, i) => ({
-    date: new Date(Date.now() - (52 * 7 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    count: Math.random() > 0.6 ? Math.floor(Math.random() * 10) : 0,
-    level: Math.random() > 0.6 ? Math.floor(Math.random() * 5) : 0
-  }));
+const LEVEL_CLASS = [
+  'bg-foreground/[0.07]',
+  'bg-foreground/25',
+  'bg-foreground/45',
+  'bg-foreground/70',
+  'bg-foreground',
+];
 
-  const getColor = (level: number) => {
-    switch (level) {
-      case 0: return 'bg-white/[0.08]';
-      case 1: return 'bg-white/30';
-      case 2: return 'bg-white/50';
-      case 3: return 'bg-white/80';
-      case 4: return 'bg-white shadow-[0_0_5px_rgba(255,255,255,0.4)]';
-      default: return 'bg-white/[0.05]';
-    }
-  };
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const DAY_LABELS = ['Mon', 'Wed', 'Fri'];
 
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const days = ['Mon', 'Wed', 'Fri'];
+const ContributionsChart = ({ data, greeting = 'HELLO WORLD' }: ContributionsChartProps) => {
+  const reduce = useReducedMotion();
+
+  // Built once so re-renders never reshuffle the noise around the letters.
+  const chartData = useMemo(
+    () => (data && data.length > 0 ? data : buildGreetingCalendar(greeting)),
+    [data, greeting]
+  );
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex gap-4">
-        {/* Day Labels */}
-        <div className="flex flex-col justify-between pt-10 pb-4">
-          {days.map(day => (
-            <span key={day} className="text-[9px] text-white uppercase tracking-tighter font-bold">{day}</span>
+      <div className="flex gap-3">
+        <div className="flex flex-col justify-around pb-5 pt-8">
+          {DAY_LABELS.map((day) => (
+            <span key={day} className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted-foreground">
+              {day}
+            </span>
           ))}
         </div>
 
-        <div className="flex-1">
-          {/* Month Labels */}
-          <div className="flex justify-between text-[10px] tracking-[0.2em] text-white uppercase mb-4 px-1 font-bold">
-            {months.map(m => <span key={m}>{m}</span>)}
-          </div>
+        <div className="min-w-0 flex-1 overflow-x-auto pb-2">
+          <div className="w-max">
+            {/* w-full inside the w-max wrapper matches the grid's width, so
+                the labels span the same distance as the 53 columns below. */}
+            <div className="mb-3 flex w-full justify-between font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+              {MONTHS.map((m) => (
+                <span key={m}>{m}</span>
+              ))}
+            </div>
 
-          {/* The Grid */}
-          <div className="grid grid-flow-col grid-rows-7 gap-1">
-            {chartData.map((day, i) => (
-              <div
-                key={i}
-                title={`${day.count} contributions on ${day.date}`}
-                className={cn(
-                  "w-[10px] h-[10px] md:w-[12px] md:h-[12px] rounded-[2px] transition-all duration-300 hover:scale-150 hover:z-20 border border-white/5",
-                  getColor(day.level)
-                )}
-              />
-            ))}
+            <div className="grid grid-flow-col grid-rows-7 gap-[3px]">
+              {chartData.map((day, i) => {
+                // Column index drives the delay, so the year fills in left to
+                // right and the word writes itself.
+                const column = Math.floor(i / 7);
+                return (
+                  <motion.div
+                    key={`${day.date}-${i}`}
+                    title={`${day.count} on ${day.date}`}
+                    initial={reduce ? false : { opacity: 0, scale: 0.5 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true, amount: 0.1 }}
+                    transition={{
+                      duration: 0.3,
+                      ease: [0.16, 1, 0.3, 1],
+                      delay: reduce ? 0 : column * 0.016,
+                    }}
+                    className={cn(
+                      'h-[11px] w-[11px] rounded-[2px] transition-transform duration-200 hover:scale-150 md:h-[12px] md:w-[12px]',
+                      LEVEL_CLASS[day.level] ?? LEVEL_CLASS[0]
+                    )}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="flex items-center justify-end gap-3 mt-4 text-[9px] tracking-widest text-white uppercase font-bold">
-        <span className="opacity-60">Less</span>
-        <div className="flex gap-1">
-          {[0, 1, 2, 3, 4].map(l => (
-            <div key={l} className={cn("w-3 h-3 rounded-[1px] border border-white/10", getColor(l))} />
+      <div className="flex items-center justify-end gap-2.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+        <span>Less</span>
+        <div className="flex gap-[3px]">
+          {LEVEL_CLASS.map((cls, l) => (
+            <div key={l} className={cn('h-3 w-3 rounded-[2px]', cls)} />
           ))}
         </div>
-        <span className="opacity-60">More</span>
+        <span>More</span>
       </div>
     </div>
   );

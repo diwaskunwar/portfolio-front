@@ -2,138 +2,244 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   DESIGN TOKENS
+   Theme lock: dark only. Cool near-black neutrals, never #000.
+   Accent lock: ember. One accent, whole page, nothing else.
+   Radius lock: interactive = full pill, surfaces = 14px, chips = full.
+   ============================================================ */
+
 @layer base {
   :root {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
+    color-scheme: dark;
 
-    --card: 0 0% 5%;
-    --card-foreground: 0 0% 100%;
+    /* Neutrals (cool ramp, off-black base) */
+    --background: 240 6% 4%;
+    --foreground: 240 6% 96%;
 
-    --popover: 0 0% 5%;
-    --popover-foreground: 0 0% 100%;
+    --surface: 240 5% 7%;
+    --surface-raised: 240 5% 10%;
 
-    --primary: 0 0% 100%;
-    --primary-foreground: 0 0% 0%;
+    --card: 240 5% 7%;
+    --card-foreground: 240 6% 96%;
 
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 100%;
+    --popover: 240 5% 7%;
+    --popover-foreground: 240 6% 96%;
 
-    --muted: 0 0% 20%;
-    --muted-foreground: 0 0% 80%;
+    --primary: 240 6% 96%;
+    --primary-foreground: 240 6% 4%;
 
+    --secondary: 240 5% 10%;
+    --secondary-foreground: 240 6% 96%;
+
+    --muted: 240 5% 12%;
+    --muted-foreground: 240 5% 64%;
+
+    /* Monochrome. White is the accent; there is no second hue on the page. */
     --accent: 0 0% 100%;
-    --accent-foreground: 0 0% 0%;
+    --accent-foreground: 240 6% 4%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 62% 52%;
+    --destructive-foreground: 240 6% 96%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
+    --border: 240 5% 16%;
+    --input: 240 5% 16%;
     --ring: 0 0% 100%;
 
-    --radius: 1rem;
+    /* Radius lock */
+    --radius: 14px;
   }
 }
 
 @layer base {
   * {
-    @apply border-border selection:bg-white selection:text-black;
+    @apply border-border;
+  }
+
+  ::selection {
+    background: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
   }
 
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   body {
-    @apply bg-black text-white/90 font-sans;
-    cursor: default;
-    letter-spacing: 0.025em;
+    @apply bg-background text-foreground font-sans;
+    font-variant-ligatures: common-ligatures;
   }
 
-  /* Custom Scrollbar */
+  /* Display type: tight, optical, never letter-spaced loose */
+  h1,
+  h2,
+  h3 {
+    font-feature-settings: "ss01" 1, "cv01" 1;
+  }
+
+  /* Visible keyboard focus, accent-locked */
+  :focus-visible {
+    outline: 2px solid hsl(var(--accent));
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
   }
 
   ::-webkit-scrollbar-track {
-    background: black;
+    background: hsl(var(--background));
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #333;
-    border-radius: 10px;
-    border: 2px solid black;
+    background: hsl(240 5% 18%);
+    border-radius: 999px;
+    border: 3px solid hsl(var(--background));
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: hsl(240 5% 26%);
   }
 }
+
+/* ============================================================
+   COMPONENT PRIMITIVES
+   ============================================================ */
+
+@layer components {
+
+  /* Mono metadata label. The site's signature voice.
+     Tracking is wide but capped: past 0.3em it stops reading as type. */
+  .label-mono {
+    @apply font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground;
+  }
+
+  /* Hairline rule used to group content instead of card chrome */
+  .rule {
+    @apply h-px w-full bg-border;
+  }
+
+  /* Frosted surface. Solid fallback below for reduced-transparency. */
+  .glass {
+    background: linear-gradient(180deg,
+        hsl(0 0% 100% / 0.055),
+        hsl(0 0% 100% / 0.02));
+    border: 1px solid hsl(0 0% 100% / 0.08);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.07);
+  }
+}
+
+/* ============================================================
+   MOTION
+   Every keyframe below animates transform/opacity only.
+   ============================================================ */
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translate3d(0, 20px, 0);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 .animate-fade-in {
-  animation: fadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Glassmorphism utility */
-.glass {
-  @apply bg-white/[0.05] backdrop-blur-xl border border-white/10;
-}
+/* Idle terminal caret. Steps rather than eases, like a real one. */
+@keyframes caretBlink {
 
-/* Typography Enhancements */
-.text-tracking-ultra {
-  letter-spacing: 0.5em;
-}
-
-/* Water/Liquid Progress Animation */
-@keyframes liquidFlow {
-  0% {
-    background-position: 200% 0;
+  0%,
+  49% {
+    opacity: 1;
   }
 
+  50%,
   100% {
-    background-position: -200% 0;
+    opacity: 0;
   }
 }
 
-.progress-liquid {
-  background: linear-gradient(90deg,
-      rgba(255, 255, 255, 1) 0%,
-      rgba(255, 255, 255, 0.6) 25%,
-      rgba(255, 255, 255, 1) 50%,
-      rgba(255, 255, 255, 0.6) 75%,
-      rgba(255, 255, 255, 1) 100%);
-  background-size: 200% 100%;
-  animation: liquidFlow 4s linear infinite;
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+.animate-caret {
+  animation: caretBlink 1.05s step-end infinite;
+}
+
+/* Shimmer for skeleton loaders only, never decoration */
+@keyframes shimmerSweep {
+  from {
+    transform: translate3d(-100%, 0, 0);
+  }
+
+  to {
+    transform: translate3d(100%, 0, 0);
+  }
+}
+
+.skeleton {
+  @apply relative overflow-hidden bg-muted;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, hsl(0 0% 100% / 0.07), transparent);
+  animation: shimmerSweep 1.6s ease-in-out infinite;
 }
 
 @keyframes slideRight {
   from {
-    width: 0;
+    transform: scaleX(0);
   }
 
   to {
-    width: var(--progress-width, 100%);
+    transform: scaleX(1);
   }
 }
 
 .animate-progress {
-  animation: slideRight 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: left center;
+  animation: slideRight 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.progress-liquid {
+  background: hsl(var(--accent));
+}
+
+/* ============================================================
+   ACCESSIBILITY OVERRIDES
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: hsl(var(--surface-raised));
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 }

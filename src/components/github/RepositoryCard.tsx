@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
-import { Star, GitFork, ExternalLink } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { Star, GitFork, ArrowUpRight } from 'lucide-react';
 import { GitHubRepo } from '@/types/github';
 
 interface RepositoryCardProps {
@@ -7,84 +8,77 @@ interface RepositoryCardProps {
   index: number;
 }
 
+const EASE = [0.16, 1, 0.3, 1] as const;
+
+const formatDate = (dateString: string) =>
+  new Date(dateString).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+
 const RepositoryCard: React.FC<RepositoryCardProps> = ({ repo, index }) => {
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      year: 'numeric'
-    });
-  };
+  const reduce = useReducedMotion();
 
   return (
-    <a
+    <motion.a
       href={repo.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="block bg-black/40 backdrop-blur-sm border border-white/10 rounded-lg p-6 hover:bg-white/5 hover:border-white/20 transition-all duration-300 group"
-      style={{
-        animationDelay: `${index * 50}ms`,
-        animation: 'fadeIn 0.5s ease-out forwards',
-        opacity: 0
-      }}
+      // Was an inline CSS animation with opacity:0 baked into style, which
+      // fired on mount regardless of whether the card had been scrolled to.
+      initial={reduce ? false : { opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.55, ease: EASE, delay: reduce ? 0 : (index % 3) * 0.08 }}
+      className="group flex h-full flex-col rounded-lg border border-border bg-surface/60 p-6 transition-colors duration-300 hover:border-foreground/30 hover:bg-surface-raised"
     >
-      {/* Header */}
-      <div className="flex justify-between items-start mb-3">
-        <h3 className="font-bold text-white text-base tracking-tight group-hover:translate-x-1 transition-transform truncate flex-1 mr-4 uppercase">
-          {repo.name.replace(/-/g, ' ').replace(/_/g, ' ')}
+      <div className="mb-3 flex items-start justify-between gap-4">
+        <h3 className="truncate text-base font-medium tracking-[-0.01em] text-foreground">
+          {repo.name.replace(/[-_]/g, ' ')}
         </h3>
-        <ExternalLink className="h-4 w-4 text-white group-hover:scale-125 transition-all" />
+        <ArrowUpRight
+          size={17}
+          strokeWidth={1.5}
+          className="shrink-0 text-muted-foreground transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground motion-reduce:transition-none"
+        />
       </div>
 
-      {/* Description */}
-      <p className="text-white/80 text-sm mb-4 line-clamp-2 leading-relaxed font-light min-h-[2.5rem]">
-        {repo.description || 'A project built with care'}
+      <p className="mb-5 line-clamp-2 min-h-[2.75rem] text-sm leading-relaxed text-muted-foreground">
+        {repo.description || 'No description provided.'}
       </p>
 
-      {/* Tags */}
       {repo.topics && repo.topics.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-4">
-          {repo.topics.slice(0, 3).map((topic, i) => (
-            <span
-              key={i}
-              className="text-[10px] tracking-wider text-white uppercase px-2 py-1 border border-white/40 rounded-full font-bold"
+        <ul className="mb-5 flex flex-wrap gap-1.5">
+          {repo.topics.slice(0, 3).map((topic) => (
+            <li
+              key={topic}
+              className="rounded-full border border-border px-2.5 py-1 font-mono text-[10px] tracking-[0.06em] text-muted-foreground"
             >
               {topic}
-            </span>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
 
-      {/* Meta */}
-      <div className="flex items-center justify-between text-xs text-white pt-4 border-t border-white/20 font-bold">
+      <div className="mt-auto flex items-center justify-between border-t border-border pt-4 font-mono text-[11px] text-muted-foreground">
         <div className="flex items-center gap-4">
-          {repo.language && (
-            <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-white"></span>
-              {repo.language}
-            </span>
-          )}
+          {repo.language && <span>{repo.language}</span>}
 
           {repo.stars > 0 && (
-            <span className="flex items-center gap-1">
-              <Star className="h-3 w-3" fill="white" />
+            <span className="flex items-center gap-1.5">
+              <Star className="h-3 w-3" strokeWidth={1.75} />
               {repo.stars}
             </span>
           )}
 
           {repo.forks > 0 && (
-            <span className="flex items-center gap-1">
-              <GitFork className="h-3 w-3" />
+            <span className="flex items-center gap-1.5">
+              <GitFork className="h-3 w-3" strokeWidth={1.75} />
               {repo.forks}
             </span>
           )}
         </div>
 
-        <span className="text-white/80">
-          {formatDate(repo.updated_at)}
-        </span>
+        <span>{formatDate(repo.updated_at)}</span>
       </div>
-    </a>
+    </motion.a>
   );
 };
 

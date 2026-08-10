@@ -81,17 +81,19 @@ const githubContributionsActions = createApiActions<ContributionStats>(
   FETCH_GITHUB_CONTRIBUTIONS_FAILURE
 );
 
-// GitHub configuration - these should be set via environment variables
+/**
+ * Public data only.
+ *
+ * A token read through `import.meta.env` is inlined into the production
+ * bundle by Vite, so anyone loading the site can read it. Everything this
+ * site shows (public repositories, stars, languages) is available
+ * unauthenticated, so no credential is used.
+ */
 const getGitHubConfig = () => {
-  const token = import.meta.env.VITE_GITHUB_TOKEN;
-  const username = import.meta.env.VITE_GITHUB_USERNAME;
+  const username = import.meta.env.VITE_GITHUB_USERNAME || 'diwaskunwar';
   const org = import.meta.env.VITE_GITHUB_ORG;
 
-  if (!token || !username) {
-    throw new Error('GitHub credentials not configured. Please set VITE_GITHUB_TOKEN and VITE_GITHUB_USERNAME in your environment variables.');
-  }
-
-  return { token, username, org };
+  return { token: undefined as string | undefined, username, org };
 };
 
 // GitHub service class

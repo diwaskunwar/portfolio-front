@@ -8,48 +8,55 @@ import ProfessionalJourney from '@/components/sections/ProfessionalJourney';
 import TechnicalExpertise from '@/components/sections/TechnicalExpertise';
 import Projects from '@/components/sections/Projects';
 import GitHubActivity from '@/components/sections/GitHubActivity';
-import { ChatWindow } from '@/components/common/ChatWindow';
 import Certificates from '@/components/sections/Certificates';
+import ShippedWork from '@/components/sections/ShippedWork';
+import OffTheClock from '@/components/sections/OffTheClock';
+import BootSequence from '@/components/effects/BootSequence';
 
 const ParticleBackground = lazy(() => import('@/components/effects/ParticleBackground'));
 
 const Index = () => {
   useEffect(() => {
-    document.body.className = 'bg-black selection:bg-white selection:text-black overflow-x-hidden';
+    document.body.classList.add('overflow-x-hidden');
     return () => {
-      document.body.className = '';
+      document.body.classList.remove('overflow-x-hidden');
     };
   }, []);
 
   return (
     <ProfileProvider>
-      <div className="min-h-screen flex flex-col bg-black relative selection:bg-white selection:text-black">
-        {/* Global Particle Background */}
-        <div className="fixed inset-0 z-0 pointer-events-none">
+      <BootSequence />
+      <div className="relative flex min-h-[100dvh] flex-col bg-background">
+        {/* Ambient layer. Static paint, never scrolls, never hit-tested. */}
+        <div className="pointer-events-none fixed inset-0 z-0" aria-hidden="true">
           <Suspense fallback={null}>
-            <ParticleBackground particleCount={150} color="rgba(255, 255, 255, 0.5)" />
+            <ParticleBackground particleCount={90} color="rgba(244,244,246,0.42)" />
           </Suspense>
-          <div className="absolute top-0 left-0 w-full h-[70vh] bg-gradient-to-b from-white/[0.12] to-transparent pointer-events-none"></div>
-          <div className="absolute bottom-0 left-0 w-full h-[50vh] bg-gradient-to-t from-white/[0.05] to-transparent pointer-events-none"></div>
-          {/* Subtle orbital glows */}
-          <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] bg-white/[0.03] rounded-full blur-[150px]"></div>
-          <div className="absolute bottom-[20%] right-[-10%] w-[500px] h-[500px] bg-white/[0.03] rounded-full blur-[150px]"></div>
+          {/* Neutral blooms. No hue on the page beyond black and white. */}
+          <div className="absolute -left-[15%] -top-[20%] h-[720px] w-[720px] rounded-full bg-[hsl(0_0%_100%/0.045)] blur-[160px]" />
+          <div className="absolute -right-[10%] top-[45%] h-[560px] w-[560px] rounded-full bg-[hsl(0_0%_100%/0.03)] blur-[150px]" />
+          {/* Grounds the fold so content never floats on a flat field */}
+          <div className="absolute inset-x-0 bottom-0 h-[45vh] bg-gradient-to-t from-background to-transparent" />
         </div>
 
         <Navigation />
 
-        {/* Removed fixed left margin to center content naturally with the floating pill */}
-        <main className="flex-1 transition-all duration-500 relative z-10 px-4 md:px-24">
+        {/* Left padding clears the resting nav (markers + icon pill). The
+            hover-expanded title is transient and allowed to overlap. */}
+        <main className="relative z-10 flex-1 px-4 md:pl-32 md:pr-10 lg:pl-40 lg:pr-16">
+          {/* Order tells the story: career, then what shipped from it, then
+              credentials, then open source, then the person. */}
           <Hero />
           <ProfessionalJourney />
+          <ShippedWork />
           <TechnicalExpertise />
+          <Certificates />
           <Projects />
           <GitHubActivity />
-          <Certificates />
+          <OffTheClock />
         </main>
 
         <Footer />
-        <ChatWindow />
       </div>
     </ProfileProvider>
   );

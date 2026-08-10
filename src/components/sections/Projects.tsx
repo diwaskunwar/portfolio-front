@@ -1,13 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback, memo, lazy, Suspense } from 'react';
-import { Code, Loader2, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
+import { Code, ArrowRight } from 'lucide-react';
 import Section from '@/components/common/Section';
 import Container from '@/components/common/Container';
 import RepositoryCard from '@/components/github/RepositoryCard';
 import { GitHubRepo } from '@/types/github';
 import { useGithubData } from '@/hooks/useGithubData';
-
-// Lazy load the particle background for better performance
-const ParticleBackground = lazy(() => import('@/components/effects/ParticleBackground'));
 
 const Projects = () => {
   const [viewType, setViewType] = useState<'top' | 'all'>('top');
@@ -39,65 +36,72 @@ const Projects = () => {
   }, [repos.data]);
 
   return (
-    <Section id="projects" className="relative overflow-hidden min-h-screen">
-      <Container className="py-24 relative z-10">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <span className="text-xs tracking-[0.3em] text-white uppercase mb-4 block font-bold">Portfolio</span>
-          <h2 className="text-4xl md:text-6xl font-extralight mb-6 text-white tracking-tight">
-            Projects
+    <Section id="projects" className="relative overflow-hidden py-28 md:py-36">
+      <Container className="relative z-10 w-full">
+        {/* Header. Distinct from "What I have shipped": this is the public
+            repository trail, not the products that reached users. */}
+        <div className="mb-14 max-w-2xl">
+          <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-medium leading-[1.08] tracking-[-0.035em] text-foreground">
+            Open source
           </h2>
-          <div className="w-24 h-px bg-white/40 mx-auto mb-6"></div>
-          <p className="text-white/80 max-w-lg mx-auto text-base font-light">
-            Open source work and personal projects
+          <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
+            Public repositories and things built for their own sake.
           </p>
         </div>
 
-        {/* Minimal Toggle */}
-        <div className="flex justify-center mb-12">
-          <div className="inline-flex border border-white/20 rounded-full backdrop-blur-sm overflow-hidden">
+        <div className="mb-12 flex justify-start">
+          <div className="inline-flex overflow-hidden rounded-full border border-border">
             <button
               onClick={() => setViewType('top')}
-              className={`px-8 py-3 text-sm tracking-wider transition-all duration-300 font-bold ${viewType === 'top'
-                ? 'bg-white text-black'
-                : 'bg-transparent text-white/50 hover:text-white'
+              className={`px-7 py-2.5 font-mono text-[11px] uppercase tracking-[0.16em] transition-colors duration-200 ${viewType === 'top'
+                ? 'bg-foreground text-background'
+                : 'bg-transparent text-muted-foreground hover:text-foreground'
                 }`}
             >
-              FEATURED
+              Featured
             </button>
             <button
               onClick={() => setViewType('all')}
-              className={`px-8 py-3 text-sm tracking-wider transition-all duration-300 font-bold ${viewType === 'all'
-                ? 'bg-white text-black'
-                : 'bg-transparent text-white/50 hover:text-white'
+              className={`px-7 py-2.5 font-mono text-[11px] uppercase tracking-[0.16em] transition-colors duration-200 ${viewType === 'all'
+                ? 'bg-foreground text-background'
+                : 'bg-transparent text-muted-foreground hover:text-foreground'
                 }`}
             >
-              ALL
+              All
             </button>
           </div>
         </div>
 
-        {/* Loading */}
+        {/* Loading. Skeletons match the card grid, so nothing shifts on arrival. */}
         {repos.loading && (!displayedRepos || displayedRepos.length === 0) && (
-          <div className="flex justify-center items-center py-24">
-            <Loader2 className="h-6 w-6 text-white animate-spin" />
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="skeleton h-44 rounded-lg" />
+            ))}
           </div>
         )}
 
         {/* Error */}
         {repos.error && (
-          <div className="text-center py-16">
-            <p className="text-white/60 mb-6 text-sm font-medium">Unable to load repositories</p>
-            <button onClick={fetchRepositories} className="text-white text-sm border-b border-white pb-1 hover:text-white/70 hover:border-white/70 transition-colors">
-              Retry
+          <div className="rounded-lg border border-border p-10">
+            <p className="text-muted-foreground">
+              Could not reach GitHub just now.
+            </p>
+            <button
+              onClick={fetchRepositories}
+              className="mt-5 rounded-full border border-border px-6 py-2.5 text-sm font-semibold text-foreground transition-colors hover:border-foreground/35 hover:bg-surface-raised"
+            >
+              Try again
             </button>
           </div>
         )}
 
         {/* Empty */}
         {!repos.loading && !repos.error && (!displayedRepos || displayedRepos.length === 0) && (
-          <div className="text-center py-16">
-            <p className="text-white/60 text-sm font-medium">No repositories found</p>
+          <div className="rounded-lg border border-border p-10">
+            <p className="text-muted-foreground">
+              No public repositories to show yet.
+            </p>
           </div>
         )}
 
@@ -111,26 +115,26 @@ const Projects = () => {
             </div>
 
             {/* Actions */}
-            <div className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-6">
+            <div className="mt-14 flex flex-col items-start gap-6 sm:flex-row sm:items-center">
+              <a
+                href="https://github.com/diwaskunwar"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-90 active:translate-y-px"
+              >
+                <Code className="h-4 w-4" strokeWidth={1.75} />
+                GitHub profile
+              </a>
+
               {viewType === 'top' && (
                 <button
                   onClick={() => setViewType('all')}
-                  className="group flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm tracking-wider font-bold"
+                  className="group flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground transition-colors hover:text-foreground"
                 >
-                  VIEW ALL PROJECTS
-                  <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  View all repositories
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" />
                 </button>
               )}
-
-              <a
-                href="https://github.com/witcher9591"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-8 py-3 bg-white text-black text-sm tracking-wider hover:bg-gray-200 transition-colors rounded-full"
-              >
-                <Code className="h-4 w-4" />
-                GITHUB PROFILE
-              </a>
             </div>
           </>
         )}

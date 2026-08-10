@@ -1,165 +1,262 @@
-
+import { motion, useReducedMotion, type Variants } from 'framer-motion';
+import { Github, Linkedin, Mail, ArrowRight } from 'lucide-react';
 import { useProfile } from '@/store/ProfileContext';
 import Section from '@/components/common/Section';
 import Container from '@/components/common/Container';
-import { Github, Linkedin, Mail } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import ScrollIndicator from '@/components/common/ScrollIndicator';
+import BlockPortrait from '@/components/effects/BlockPortrait';
+import MagneticLink from '@/components/common/MagneticLink';
+import { useIsBooted } from '@/lib/bootState';
 
-const slogans = [
-  "Architecting Scalable Intelligence",
-  "Engineering High-Performance Ecosystems",
-  "Innovating Impact-Driven Solutions",
-  "Advancing LLM Infrastructures"
-];
+const PORTRAIT = '/diwas.webp';
 
-const DIRECTIVE_TEXT = '"Passionate about solving real-world problems through AI, I build tailored machine learning systems and scalable backend solutions that are innovative, practical, and impact-driven."';
+const SOCIALS = [
+  { href: 'https://github.com/diwaskunwar', label: 'GitHub', Icon: Github },
+  { href: 'https://www.linkedin.com/in/diwas-kunwar/', label: 'LinkedIn', Icon: Linkedin },
+  { href: 'mailto:diwas.kuwar@gmail.com', label: 'Email', Icon: Mail },
+] as const;
+
+/* The full span of the work, not just the retrieval slice. */
+const CAPABILITIES = [
+  'Agentic AI',
+  'LLM systems & RAG',
+  'Training & finetuning',
+  'Deployment & MLOps',
+  'Latency & optimization',
+  'Backend, frontend & CI/CD',
+] as const;
+
+const EASE = [0.16, 1, 0.3, 1] as const;
 
 const Hero = () => {
   const { profileData, loading } = useProfile();
-  const [sloganIndex, setSloganIndex] = useState(0);
-  const [fade, setFade] = useState(true);
-  const [showDescentIndicator, setShowDescentIndicator] = useState(true);
-  const [typedText, setTypedText] = useState('');
-  const [typingDone, setTypingDone] = useState(false);
-  const [cursorVisible, setCursorVisible] = useState(true);
+  const reduceMotion = useReducedMotion();
+  // Held back until the boot overlay starts lifting, otherwise this entrance
+  // plays out of sight and the interface appears fully formed.
+  const booted = useIsBooted();
 
-  // Slogan rotation
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setFade(false);
-      setTimeout(() => {
-        setSloganIndex((prev) => (prev + 1) % slogans.length);
-        setFade(true);
-      }, 500);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
+  /* Entry stagger. Motivated by hierarchy: name, discipline, what he does,
+     the two things worth clicking, then the supporting range. */
+  const container: Variants = {
+    hidden: {},
+    show: {
+      transition: { staggerChildren: reduceMotion ? 0 : 0.08, delayChildren: 0.08 },
+    },
+  };
 
-  // Hide descent indicator when hero scrolls out of view
-  // NOTE: must use portal (createPortal) because Section applies CSS transform (translate-y-0)
-  // which traps position:fixed children relative to that transform context, not the viewport.
-  useEffect(() => {
-    const handleScroll = () => {
-      const heroSection = document.getElementById('hero');
-      if (heroSection) {
-        const heroBottom = heroSection.getBoundingClientRect().bottom;
-        setShowDescentIndicator(heroBottom > 80);
-      }
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Typing animation for Current Directive
-  useEffect(() => {
-    if (typedText.length < DIRECTIVE_TEXT.length) {
-      const timeout = setTimeout(() => {
-        setTypedText(DIRECTIVE_TEXT.slice(0, typedText.length + 1));
-      }, 28);
-      return () => clearTimeout(timeout);
-    } else {
-      setTypingDone(true);
-    }
-  }, [typedText]);
-
-  // Cursor blink while typing
-  useEffect(() => {
-    if (typingDone) return;
-    const interval = setInterval(() => {
-      setCursorVisible((prev) => !prev);
-    }, 500);
-    return () => clearInterval(interval);
-  }, [typingDone]);
+  const item: Variants = {
+    hidden: reduceMotion ? { opacity: 1 } : { opacity: 0, y: 18 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } },
+  };
 
   if (loading || !profileData) {
     return (
-      <Section id="hero" className="justify-center">
-        <div className="h-12 w-64 bg-white/10 animate-pulse rounded-full mx-auto"></div>
+      <Section id="hero" fullHeight className="pt-24">
+        <Container className="w-full">
+          {/* Skeleton mirrors the real layout so nothing shifts on load (CLS) */}
+          <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-12 lg:gap-20">
+            <div className="space-y-6 lg:col-span-7">
+              <div className="skeleton h-20 w-full max-w-xl rounded-md md:h-28" />
+              <div className="skeleton h-4 w-52 rounded-full" />
+              <div className="skeleton h-4 w-full max-w-md rounded-full" />
+              <div className="skeleton h-4 w-2/3 max-w-sm rounded-full" />
+              <div className="flex gap-4 pt-4">
+                <div className="skeleton h-12 w-40 rounded-full" />
+                <div className="skeleton h-12 w-40 rounded-full" />
+              </div>
+              <div className="skeleton h-20 w-full max-w-lg rounded-md" />
+            </div>
+            <div className="lg:col-span-5">
+              <div className="skeleton aspect-square w-full max-w-[380px] rounded-lg" />
+            </div>
+          </div>
+        </Container>
       </Section>
     );
   }
 
-  const { name } = profileData.profile;
+  const { name, location } = profileData.profile;
+  const current = profileData.experience?.companies?.[0];
 
   return (
-    <Section id="hero" className="relative min-h-screen flex flex-col items-center justify-center pt-20">
-      <Container className="z-10 text-center">
-
-        {/* Neural Engine badge — water-glass fill + snake border glow */}
-        <div className="inline-block mb-10 animate-fade-in">
-          <div className="neural-badge-outer rounded-full p-[1px]">
-            <div className="relative rounded-full overflow-hidden bg-black px-6 py-2">
-              {/* Water fill layer */}
-              <div className="neural-water absolute inset-0 bg-white" />
-              {/* Text — mix-blend-difference makes it invert as water fills */}
-              <span
-                className="relative z-10 text-[10px] tracking-[0.5em] uppercase font-bold"
-                style={{ color: 'white', mixBlendMode: 'difference' }}
-              >
-                Neural Engine Synchronized
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <h1 className="text-6xl md:text-9xl font-extralight text-white tracking-tighter mb-8 leading-none selection:bg-white selection:text-black">
-          {name}
-        </h1>
-
-        <div className="h-12 md:h-16 mb-16 overflow-hidden">
-          <p className={`text-white text-xl md:text-3xl font-light tracking-[0.2em] transition-all duration-500 ${fade ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            {slogans[sloganIndex]}
-          </p>
-        </div>
-
-        <p className="text-white text-lg md:text-2xl font-light mb-16 tracking-[0.1em] max-w-4xl mx-auto leading-relaxed border-t border-b border-white/10 py-8">
-          AI/ML Engineer
-        </p>
-
-        <div className="flex flex-col md:flex-row items-center justify-center gap-12 mt-8 animate-fade-in" style={{ animationDelay: '300ms' }}>
-          <div className="max-w-xl text-left border-l-2 border-white pl-10 relative group">
-            <p className="text-white uppercase text-[9px] tracking-[0.5em] font-bold mb-4">Current Directive</p>
-            <p className="text-white text-lg md:text-xl font-light leading-relaxed min-h-[4rem]">
-              {typedText}
-              {!typingDone && (
-                <span
-                  className={`inline-block w-0.5 h-5 bg-white ml-0.5 align-middle transition-opacity duration-100 ${cursorVisible ? 'opacity-100' : 'opacity-0'}`}
-                />
-              )}
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-8 justify-center items-center">
-            <a href="https://github.com/diwaskunwar" target="_blank" rel="noopener noreferrer" className="text-white hover:scale-125 transition-all duration-300" title="GitHub">
-              <Github size={32} strokeWidth={1} />
-            </a>
-            <a href="https://www.linkedin.com/in/diwas-kunwar/" target="_blank" rel="noopener noreferrer" className="text-white hover:scale-125 transition-all duration-300" title="LinkedIn">
-              <Linkedin size={32} strokeWidth={1} />
-            </a>
-            <a href="https://huggingface.co/diwaskunwar10" target="_blank" rel="noopener noreferrer" className="hover:scale-125 transition-all duration-300 flex items-center" title="Hugging Face">
-              <img src="/hf-logo.svg" alt="Hugging Face" className="w-8 h-8" />
-            </a>
-            <a href="mailto:diwas.kunwar@gmail.com" className="text-white hover:scale-125 transition-all duration-300" title="Email">
-              <Mail size={32} strokeWidth={1} />
-            </a>
-          </div>
-        </div>
-      </Container>
-
-      {/* Portal: renders directly in document.body so position:fixed is relative to viewport,
-          not the Section's CSS transform context */}
-      {createPortal(
-        <div
-          className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ${
-            showDescentIndicator ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
-          }`}
+    <Section id="hero" fullHeight className="pt-24">
+      <Container className="w-full">
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate={booted ? 'show' : 'hidden'}
+          className="grid grid-cols-1 items-center gap-14 lg:grid-cols-12 lg:gap-20"
         >
-          <ScrollIndicator targetId="professional-journey" />
-        </div>,
-        document.body
-      )}
+          {/* ---------------- Left: the message ---------------- */}
+          <div className="lg:col-span-7">
+            {/* Name. Each letter rides up from behind its own mask, so the
+                name assembles rather than simply fading in. */}
+            <h1
+              aria-label={name}
+              className="text-[clamp(2.75rem,9vw,6.5rem)] font-medium leading-[1.02] tracking-[-0.04em] text-foreground"
+            >
+              {name.split(' ').map((word, w, all) => (
+                <span key={`${word}-${w}`}>
+                <span className="inline-block">
+                  {word.split('').map((char, c) => (
+                    <span
+                      key={`${char}-${c}`}
+                      aria-hidden="true"
+                      className="inline-block overflow-hidden pb-[0.1em] align-bottom"
+                    >
+                      <motion.span
+                        className="inline-block"
+                        variants={{
+                          hidden: reduceMotion ? { y: '0%' } : { y: '110%' },
+                          show: {
+                            y: '0%',
+                            transition: {
+                              duration: 0.85,
+                              ease: EASE,
+                              delay: reduceMotion ? 0 : c * 0.035 + w * 0.08,
+                            },
+                          },
+                        }}
+                      >
+                        {char}
+                      </motion.span>
+                    </span>
+                  ))}
+                </span>
+                {/* Real space between words, so the heading stays copyable */}
+                {w < all.length - 1 ? ' ' : null}
+                </span>
+              ))}
+            </h1>
+
+            <motion.p
+              variants={item}
+              className="mt-5 font-mono text-sm uppercase tracking-[0.28em] text-foreground/70"
+            >
+              AI / ML Engineer
+            </motion.p>
+
+            <motion.p
+              variants={item}
+              className="mt-8 max-w-[48ch] text-lg leading-relaxed text-muted-foreground md:text-xl"
+            >
+              I build systems that solve real problems with AI and machine
+              learning. Multi-agent platforms shipped across education, legal,
+              and pharmaceutical technology.
+            </motion.p>
+
+            {/* Actions */}
+            <motion.div
+              variants={item}
+              className="mt-10 flex flex-col items-stretch gap-5 sm:flex-row sm:items-center"
+            >
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                <MagneticLink
+                  href="#projects"
+                  className="group inline-flex items-center justify-center whitespace-nowrap rounded-full bg-accent px-7 py-3.5 text-sm font-semibold text-accent-foreground"
+                >
+                  View work
+                  <ArrowRight
+                    size={16}
+                    strokeWidth={2}
+                    className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none"
+                  />
+                </MagneticLink>
+
+                <a
+                  href="mailto:diwas.kuwar@gmail.com"
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-full border border-border px-7 py-3.5 text-sm font-semibold text-foreground transition-colors duration-200 hover:border-foreground/35 hover:bg-surface-raised active:translate-y-px"
+                >
+                  Get in touch
+                </a>
+              </div>
+
+              <div className="hidden h-8 w-px bg-border sm:block" />
+
+              <div className="flex items-center gap-1">
+                {SOCIALS.map(({ href, label, Icon }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target={href.startsWith('http') ? '_blank' : undefined}
+                    rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                    aria-label={label}
+                    className="rounded-full p-2.5 text-muted-foreground transition-colors duration-200 hover:bg-surface-raised hover:text-foreground"
+                  >
+                    <Icon size={19} strokeWidth={1.5} />
+                  </a>
+                ))}
+                <a
+                  href="https://huggingface.co/diwaskunwar10"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Hugging Face"
+                  className="rounded-full p-2.5 opacity-60 transition-opacity duration-200 hover:opacity-100 grayscale"
+                >
+                  <img src="/hf-logo.svg" alt="" aria-hidden="true" className="h-[19px] w-[19px]" />
+                </a>
+              </div>
+            </motion.div>
+
+            {/* Range of work. Hairline-grouped, no card chrome. */}
+            <motion.ul
+              variants={item}
+              className="mt-12 grid max-w-xl grid-cols-2 gap-x-8 gap-y-3 border-t border-border pt-6 sm:grid-cols-3"
+            >
+              {CAPABILITIES.map((capability, i) => (
+                <motion.li
+                  key={capability}
+                  initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.5,
+                    ease: EASE,
+                    delay: reduceMotion ? 0 : 0.9 + i * 0.07,
+                  }}
+                  className="cursor-default font-mono text-[11px] uppercase leading-relaxed tracking-[0.12em] text-muted-foreground transition-colors duration-200 hover:text-foreground"
+                >
+                  {capability}
+                </motion.li>
+              ))}
+            </motion.ul>
+          </div>
+
+          {/* ---------------- Right: portrait + current role ---------------- */}
+          <motion.div
+            variants={item}
+            className="relative mx-auto w-full max-w-[380px] lg:col-span-5 lg:ml-auto lg:mr-0"
+          >
+            <div className="relative aspect-square overflow-hidden rounded-lg border border-border bg-background">
+              {/* Resolution is high enough that the photo reads as a photo,
+                  while the gutters keep it visibly built out of pixels. */}
+              <BlockPortrait
+                src={PORTRAIT}
+                alt={`Portrait of ${name}`}
+                restCols={64}
+                hoverCols={112}
+                className="h-full w-full"
+              />
+            </div>
+
+            <div className="mt-6 flex items-start justify-between gap-6 border-t border-border pt-5">
+              {current && (
+                <div>
+                  <span className="label-mono">Currently</span>
+                  <p className="mt-2 text-base leading-snug text-foreground">
+                    {current.title}
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">{current.name}</p>
+                </div>
+              )}
+              <div className="text-right">
+                <span className="label-mono">Based in</span>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {location?.replace(' District', '')}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      </Container>
     </Section>
   );
 };

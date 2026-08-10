@@ -29,9 +29,9 @@ export const getProfile = async (): Promise<ProfileData> => {
         birthDate: {},
         Urls:[
           {"name":"LinkedIn","url":"https://www.linkedin.com/in/diwas-kunwar"},
-          {"name":"GitHub","url":"https://github.com/witcher9591"},
+          {"name":"GitHub","url":"https://github.com/diwaskunwar"},
           {"name":"Website","url":"https://diwas-kunwar.com.np"},
-          {"name":"Email","url":"mailto:diwas.kunwar@gmail.com"},
+          {"name":"Email","url":"mailto:diwas.kuwar@gmail.com"},
           {"name":"Hugging Face","url":"https://huggingface.co/diwas-kunwar"},
           {"name":"Phone","url":"tel:+9779841000000"}
         ]

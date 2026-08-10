@@ -1,82 +1,84 @@
-
 import React from 'react';
+import { ArrowUpRight } from 'lucide-react';
 import Section from '@/components/common/Section';
 import Container from '@/components/common/Container';
-import { Award, ExternalLink, Calendar, CheckCircle2 } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import Reveal, { TextReveal } from '@/components/common/Reveal';
+import { useProfile } from '@/store/ProfileContext';
 
-interface Certificate {
-  title: string;
-  issuer: string;
-  date: string;
-  link?: string;
-}
-
-const certificates: Certificate[] = [
-  {
-    title: 'Python for Data Science and Machine Learning',
-    issuer: 'Coursera / IBM',
-    date: '2023',
-  },
-  {
-    title: 'Advanced Machine Learning with Python',
-    issuer: 'DeepLearning.AI',
-    date: '2024',
-  },
-  {
-    title: 'Backend Engineering Professional',
-    issuer: 'Frontend Masters',
-    date: '2023',
-  }
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
+const formatIssued = (issued?: { month?: number; year?: number }) => {
+  if (!issued?.year) return '';
+  const month = issued.month ? MONTHS[issued.month - 1] : undefined;
+  return month ? `${month} ${issued.year}` : `${issued.year}`;
+};
+
 const Certificates = () => {
+  const { profileData } = useProfile();
+  // Read from the profile rather than a hard-coded list. The previous list
+  // named certificates that do not appear anywhere in the profile data.
+  const certificates = profileData?.certifications ?? [];
+
   return (
-    <Section id="certificates">
-      <Container className="py-24">
-        {/* Header */}
-        <div className="text-center mb-20">
-          <span className="text-xs tracking-[0.4em] text-white uppercase mb-4 block font-bold">Recognition</span>
-          <h2 className="text-4xl md:text-6xl font-extralight text-white tracking-tighter mb-4">
-            Certificates
+    <Section id="certificates" className="py-28 md:py-36">
+      <Container className="w-full">
+        <div className="mb-16 max-w-2xl">
+          <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-medium leading-[1.08] tracking-[-0.035em] text-foreground">
+            <TextReveal text="Certificates" />
           </h2>
-          <div className="w-24 h-px bg-white/40 mx-auto"></div>
+          <Reveal delay={0.15}>
+            <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
+              Verifiable credentials. Every one links to its record.
+            </p>
+          </Reveal>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {certificates.map((cert, index) => (
-            <Card key={index} className="bg-white/[0.03] backdrop-blur-md border-white/5 rounded-2xl group hover:bg-white/5 transition-all duration-500 overflow-hidden relative">
-              <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
-                <Award size={64} className="text-white" />
-              </div>
-              <CardContent className="p-8 relative z-10">
-                <div className="mb-6 flex justify-between items-start">
-                  <div className="p-2 border border-white/20 rounded-lg">
-                    <Award className="h-5 w-5 text-white" />
-                  </div>
-                  {cert.link && (
-                    <a href={cert.link} target="_blank" rel="noopener noreferrer" className="text-white hover:scale-125 transition-all">
-                      <ExternalLink size={16} />
-                    </a>
-                  )}
-                </div>
+        {certificates.length === 0 ? (
+          <div className="rounded-lg border border-border p-10">
+            <p className="text-muted-foreground">No certificates to show yet.</p>
+          </div>
+        ) : (
+          <ul className="border-t border-border">
+            {certificates.map((cert, i) => {
+              const Row = cert.url ? 'a' : 'div';
+              return (
+                <Reveal as="li" key={cert.credentialId ?? cert.name} delay={i * 0.07} amount={0.4}>
+                  <Row
+                    {...(cert.url
+                      ? { href: cert.url, target: '_blank', rel: 'noopener noreferrer' }
+                      : {})}
+                    className="group grid grid-cols-1 items-baseline gap-2 border-b border-border py-8 transition-colors duration-300 hover:bg-surface/40 md:grid-cols-12 md:gap-8 md:px-4"
+                  >
+                    <span className="label-mono md:col-span-2">
+                      {formatIssued(cert.issueDate)}
+                    </span>
 
-                <h3 className="text-lg font-light text-white mb-3 tracking-tight leading-snug group-hover:translate-x-1 transition-transform">
-                  {cert.title}
-                </h3>
+                    <h3 className="text-xl font-medium tracking-[-0.02em] text-foreground md:col-span-6 md:text-2xl">
+                      {cert.name}
+                    </h3>
 
-                <div className="flex flex-col gap-3 mt-auto">
-                  <div className="flex items-center gap-2 text-white text-[10px] tracking-[0.2em] uppercase font-bold">
-                    <CheckCircle2 size={12} className="text-white" /> {cert.issuer}
-                  </div>
-                  <div className="flex items-center gap-2 text-white text-[10px] tracking-[0.2em] uppercase font-bold">
-                    <Calendar size={12} className="text-white" /> {cert.date}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                    <span className="text-sm text-muted-foreground md:col-span-3">
+                      {cert.authority}
+                    </span>
+
+                    <span className="md:col-span-1 md:justify-self-end">
+                      {cert.url && (
+                        <ArrowUpRight
+                          size={20}
+                          strokeWidth={1.5}
+                          className="text-muted-foreground transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground motion-reduce:transition-none"
+                        />
+                      )}
+                    </span>
+                  </Row>
+                </Reveal>
+              );
+            })}
+          </ul>
+        )}
       </Container>
     </Section>
   );

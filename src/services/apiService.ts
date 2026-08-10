@@ -46,6 +46,43 @@ export interface ProfileData {
     }[];
     quote?: string;
   };
+  /* The payload also carries these. They were previously untyped, so
+     consumers could not read them without casting. */
+  stats?: {
+    totalYearsExperience: number;
+    numberOfCompanies: number;
+    numberOfEducations: number;
+    numberOfSkills: number;
+    numberOfCertifications: number;
+    numberOfLanguages: number;
+  };
+  experience?: {
+    companies: {
+      name: string;
+      title: string;
+      location?: string;
+      employmentType?: string;
+      industry?: string;
+      logo?: string;
+      companyUrl?: string;
+    }[];
+  };
+  skills?: string[];
+  categorizedSkills?: Record<string, string[]>;
+  education?: {
+    schoolName: string;
+    degreeName?: string;
+    fieldOfStudy?: string;
+    dateRange?: Record<string, unknown>;
+  }[];
+  certifications?: {
+    name: string;
+    authority: string;
+    issueDate?: { month?: number; year?: number };
+    credentialId?: string;
+    url?: string;
+    displaySource?: string;
+  }[];
 }
 
 export interface GithubProfile {
@@ -209,7 +246,8 @@ class ApiService {
     }
 
     try {
-      const p = (profileData as any).profile || {};
+      const raw = profileData as any;
+      const p = raw.profile || {};
       const data: ProfileData = {
         profile: {
           name: p.name || '',
@@ -224,6 +262,14 @@ class ApiService {
           Urls: Array.isArray(p.Urls) ? p.Urls : [],
           quote: p.quote,
         },
+        // These were being dropped on the floor: the payload carries them, but
+        // only `profile` was copied across, so every consumer saw undefined.
+        stats: raw.stats,
+        experience: raw.experience,
+        education: raw.education,
+        skills: Array.isArray(raw.skills) ? raw.skills : undefined,
+        categorizedSkills: raw.categorizedSkills,
+        certifications: Array.isArray(raw.certifications) ? raw.certifications : [],
       };
 
       options?.dispatch?.(profileActions.success(data));

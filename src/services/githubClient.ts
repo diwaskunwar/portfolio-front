@@ -4,7 +4,8 @@
  */
 
 export interface GitHubConfig {
-  token: string;
+  /** Optional. Omitted in the browser so no credential ships in the bundle. */
+  token?: string;
   username: string;
   org?: string;
 }
@@ -82,11 +83,14 @@ export class GitHubClient {
     this.config = config;
   }
 
-  private get headers() {
+  private get headers(): Record<string, string> {
+    // Authorization is only attached if a token was explicitly supplied,
+    // which never happens in the browser build. Unauthenticated requests
+    // reach every public endpoint this site uses.
     return {
       'Accept': 'application/vnd.github+json',
-      'Authorization': `Bearer ${this.config.token}`,
       'X-GitHub-Api-Version': '2022-11-28',
+      ...(this.config.token ? { Authorization: `Bearer ${this.config.token}` } : {}),
     };
   }
 

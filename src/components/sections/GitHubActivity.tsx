@@ -1,139 +1,135 @@
-
-import React, { memo } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { Github, Star, GitFork } from 'lucide-react';
 import Section from '@/components/common/Section';
 import Container from '@/components/common/Container';
-import { Card, CardContent } from '@/components/ui/card';
-import { Github, GitPullRequest, GitCommit, GitMerge, FileCode, Users, Star, ExternalLink } from 'lucide-react';
+import Reveal, { TextReveal } from '@/components/common/Reveal';
+import CountUp from '@/components/common/CountUp';
 import ContributionsChart from './ContributionsChart';
 import { useGithubData } from '@/hooks/useGithubData';
 
+const EASE = [0.16, 1, 0.3, 1] as const;
+
 const GitHubActivity = () => {
-  const { contributions, repos } = useGithubData(false);
+  const { repos, fetchTopRepos } = useGithubData(false);
+  const reduce = useReducedMotion();
+  const requested = useRef(false);
 
-  // Fallback defaults for ML Engineer profile
-  const defaultBreakdown = {
-    commits: { count: 342, percentage: 65, icon: GitCommit },
-    pull_requests: { count: 48, percentage: 15, icon: GitPullRequest },
-    issues: { count: 12, percentage: 10, icon: FileCode },
-    code_reviews: { count: 24, percentage: 10, icon: Users }
-  };
+  /* Public endpoints only, no credential. This section used to require a
+     token that shipped in the bundle. */
+  useEffect(() => {
+    if (requested.current) return;
+    requested.current = true;
+    fetchTopRepos(6);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const getStat = (path: string, fallback: number) => {
-    const parts = path.split('.');
-    let current: any = contributions.data;
-    for (const part of parts) {
-      if (current === undefined || current === null) return fallback;
-      current = current[part];
-    }
-    return current || fallback;
-  };
+  const topRepos = repos.data ?? [];
 
-  // Stats for the breakdown
-  const activityBreakdown = [
-    { label: 'Commits', value: getStat('activity_breakdown.commits.count', defaultBreakdown.commits.count), percentage: getStat('activity_breakdown.commits.percentage', defaultBreakdown.commits.percentage), icon: GitCommit },
-    { label: 'Pull Requests', value: getStat('activity_breakdown.pull_requests.count', defaultBreakdown.pull_requests.count), percentage: getStat('activity_breakdown.pull_requests.percentage', defaultBreakdown.pull_requests.percentage), icon: GitPullRequest },
-    { label: 'Issues', value: getStat('activity_breakdown.issues.count', defaultBreakdown.issues.count), percentage: getStat('activity_breakdown.issues.percentage', defaultBreakdown.issues.percentage), icon: FileCode },
-    { label: 'Code Reviews', value: getStat('activity_breakdown.code_reviews.count', defaultBreakdown.code_reviews.count), percentage: getStat('activity_breakdown.code_reviews.percentage', defaultBreakdown.code_reviews.percentage), icon: Users },
-  ];
+  /* Derived from what the public API actually returns. Nothing invented. */
+  const totalStars = topRepos.reduce((sum, r) => sum + (r.stars ?? 0), 0);
+  const totalForks = topRepos.reduce((sum, r) => sum + (r.forks ?? 0), 0);
+  const languages = Array.from(
+    new Set(topRepos.map((r) => r.language).filter(Boolean))
+  );
 
   return (
-    <Section id="github-activity">
-      <Container className="py-24 max-w-6xl">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <span className="text-xs tracking-[0.5em] text-white/80 uppercase mb-4 block font-light">Open Source Analytics</span>
-          <h2 className="text-4xl md:text-6xl font-extralight text-white tracking-tighter mb-4">
-            GitHub Activity
+    <Section id="github-activity" className="py-28 md:py-36">
+      <Container className="w-full">
+        <div className="mb-16 max-w-2xl">
+          <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-medium leading-[1.08] tracking-[-0.035em] text-foreground">
+            <TextReveal text="On GitHub" />
           </h2>
-          <div className="w-24 h-px bg-white/40 mx-auto"></div>
+          <Reveal delay={0.15}>
+            <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
+              Public repositories, pulled without a token.
+            </p>
+          </Reveal>
         </div>
 
-        <div className="grid grid-cols-1 gap-12">
-          {/* Main Contribution Matrix Card */}
-          <Card className="bg-white/[0.03] backdrop-blur-md border-white/10 rounded-3xl overflow-hidden shadow-2xl">
-            <CardContent className="p-8 md:p-12">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6 border-b border-white/5 pb-8">
-                <div>
-                  <h3 className="text-xl font-light text-white mb-1">GitHub Contributions</h3>
-                  <p className="text-white text-xs tracking-widest uppercase">{getStat('total_contributions', 342)} contributions in the last year</p>
-                </div>
-                <div className="flex gap-8">
-                  <div className="flex items-center gap-2">
-                    <GitCommit size={14} className="text-white" />
-                    <span className="text-xs text-white font-medium">{getStat('activity_breakdown.commits.count', defaultBreakdown.commits.count)} commits</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <GitPullRequest size={14} className="text-white" />
-                    <span className="text-xs text-white font-medium">{getStat('activity_breakdown.pull_requests.count', defaultBreakdown.pull_requests.count)} PRs</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="overflow-x-auto pb-4 custom-scrollbar">
-                <ContributionsChart data={contributions.data?.contribution_calendar} />
-              </div>
-
-              {/* Activity Breakdown Section */}
-              <div className="mt-20">
-                <h4 className="text-[10px] tracking-[0.4em] text-white uppercase mb-8 font-bold">Activity Breakdown</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-8">
-                  {activityBreakdown.map((item, i) => (
-                    <div key={i} className="group">
-                      <div className="flex justify-between items-end mb-3">
-                        <div className="flex items-center gap-3">
-                          <item.icon size={14} className="text-white" />
-                          <span className="text-xs tracking-[0.2em] uppercase text-white font-bold">{item.label}</span>
-                        </div>
-                        <span className="text-[10px] text-white font-bold">{item.percentage}%</span>
-                      </div>
-                      <div className="h-[2px] w-full bg-white/20 relative">
-                        <div
-                          className="absolute inset-0 bg-white group-hover:scale-y-150 transition-all duration-700"
-                          style={{ width: `${item.percentage}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Recently Contributed Repositories */}
-          <div className="space-y-8">
-            <h4 className="text-[10px] tracking-[0.4em] text-white uppercase font-bold pl-4 border-l-2 border-white">Contributed Repositories</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {(repos.data || []).slice(0, 4).map((repo: any, i: number) => (
-                <Card key={i} className="bg-white/[0.05] border-white/20 hover:bg-white/[0.1] transition-all group rounded-2xl">
-                  <CardContent className="p-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <h5 className="text-sm font-bold tracking-tight text-white group-hover:translate-x-1 transition-transform">{repo.name}</h5>
-                      <div className="flex items-center gap-1.5 text-white text-[10px] font-bold">
-                        <Star size={10} fill="white" /> {repo.stargazers_count}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 rounded-full bg-white"></div>
-                      <span className="text-[10px] uppercase tracking-widest text-white font-bold">{repo.language || 'Project'}</span>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+        {/* Commit art. The calendar shape is real, the pattern is drawn. */}
+        <Reveal className="mb-20" amount={0.15}>
+          <div className="rounded-lg border border-border p-6 md:p-8">
+            <ContributionsChart greeting="HELLO WORLD" />
+            <p className="mt-6 border-t border-border pt-5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+              Commit art, not real history
+            </p>
           </div>
+        </Reveal>
 
-          {/* Action Button */}
-          <div className="flex justify-center mt-8">
+        {repos.loading && topRepos.length === 0 && (
+          <div className="grid gap-4 md:grid-cols-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="skeleton h-28 rounded-lg" />
+            ))}
+          </div>
+        )}
+
+        {!repos.loading && repos.error && (
+          <div className="rounded-lg border border-border p-10">
+            <p className="text-muted-foreground">Could not reach GitHub just now.</p>
             <button
-              onClick={() => window.open('https://github.com/witcher9591', '_blank')}
-              className="group flex items-center gap-3 px-10 py-3 rounded-full bg-white text-black hover:bg-gray-200 transition-all duration-500 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+              onClick={() => fetchTopRepos(6)}
+              className="mt-5 rounded-full border border-border px-6 py-2.5 text-sm font-semibold text-foreground transition-colors hover:border-foreground/35 hover:bg-surface-raised"
             >
-              <Github size={18} />
-              <span className="text-[10px] tracking-[0.3em] font-bold uppercase">View Full GitHub Profile</span>
-              <ExternalLink size={12} className="opacity-60 group-hover:opacity-100 transition-opacity" />
+              Try again
             </button>
           </div>
-        </div>
+        )}
+
+        {topRepos.length > 0 && (
+          <>
+            <div className="mb-14 grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-3">
+              {[
+                { label: 'Public repositories', value: topRepos.length, icon: Github },
+                { label: 'Stars', value: totalStars, icon: Star },
+                { label: 'Forks', value: totalForks, icon: GitFork },
+              ].map((stat, i) => (
+                <motion.div
+                  key={stat.label}
+                  initial={reduce ? false : { opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.5 }}
+                  transition={{ duration: 0.5, ease: EASE, delay: reduce ? 0 : i * 0.07 }}
+                  className="bg-background p-6"
+                >
+                  <stat.icon size={16} strokeWidth={1.5} className="text-muted-foreground" />
+                  <p className="mt-4 font-mono text-3xl font-medium tracking-[-0.03em] text-foreground">
+                    <CountUp to={stat.value} duration={1.2} />
+                  </p>
+                  <p className="label-mono mt-2">{stat.label}</p>
+                </motion.div>
+              ))}
+            </div>
+
+            {languages.length > 0 && (
+              <Reveal className="mb-14">
+                <ul className="flex flex-wrap gap-2">
+                  {languages.map((lang) => (
+                    <li
+                      key={lang}
+                      className="rounded-full border border-border px-4 py-2 font-mono text-[11px] tracking-[0.06em] text-muted-foreground"
+                    >
+                      {lang}
+                    </li>
+                  ))}
+                </ul>
+              </Reveal>
+            )}
+          </>
+        )}
+
+        <Reveal>
+          <a
+            href="https://github.com/diwaskunwar"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2.5 rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-90 active:translate-y-px"
+          >
+            <Github size={17} strokeWidth={1.75} />
+            View full profile
+          </a>
+        </Reveal>
       </Container>
     </Section>
   );

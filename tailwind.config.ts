@@ -18,7 +18,18 @@ export default {
 			}
 		},
 		extend: {
+			transitionTimingFunction: {
+				// Site-wide easing. Named so it is not written as an ambiguous
+				// arbitrary value at every call site.
+				swift: 'cubic-bezier(0.16, 1, 0.3, 1)',
+			},
+			fontFamily: {
+				sans: ['"Geist Variable"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+				mono: ['"Geist Mono Variable"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+			},
 			colors: {
+				surface: 'hsl(var(--surface))',
+				'surface-raised': 'hsl(var(--surface-raised))',
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -62,19 +73,11 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Custom portfolio colors
-				'theme': {
-					blue: '#4f46e5',
-					purple: '#8b5cf6',
-					'dark-blue': '#1e293b',
-					'dark': '#0f172a',
-					'darker': '#020617'
-				}
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
-				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				md: 'calc(var(--radius) - 4px)',
+				sm: 'calc(var(--radius) - 8px)'
 			},
 			keyframes: {
 				'accordion-down': {
