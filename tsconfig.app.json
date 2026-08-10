@@ -21,7 +21,8 @@
     "noImplicitAny": false,
     "noFallthroughCasesInSwitch": false,
 
-    "baseUrl": ".",
+    // No `baseUrl`: deprecated in TypeScript 7, and `paths` resolves
+    // relative to this config file without it.
     "paths": {
       "@/*": ["./src/*"]
     }

@@ -4,16 +4,19 @@ import { ProfileProvider } from '@/store/ProfileContext';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
 import Hero from '@/components/sections/Hero';
-import ProfessionalJourney from '@/components/sections/ProfessionalJourney';
-import TechnicalExpertise from '@/components/sections/TechnicalExpertise';
-import Projects from '@/components/sections/Projects';
-import GitHubActivity from '@/components/sections/GitHubActivity';
-import Certificates from '@/components/sections/Certificates';
-import ShippedWork from '@/components/sections/ShippedWork';
-import OffTheClock from '@/components/sections/OffTheClock';
 import BootSequence from '@/components/effects/BootSequence';
+import DeferredSection from '@/components/common/DeferredSection';
 
+/* Only the hero is in the initial bundle. Everything below the fold is a
+   separate chunk, requested as the reader approaches it. */
 const ParticleBackground = lazy(() => import('@/components/effects/ParticleBackground'));
+const ProfessionalJourney = lazy(() => import('@/components/sections/ProfessionalJourney'));
+const ShippedWork = lazy(() => import('@/components/sections/ShippedWork'));
+const TechnicalExpertise = lazy(() => import('@/components/sections/TechnicalExpertise'));
+const Certificates = lazy(() => import('@/components/sections/Certificates'));
+const Projects = lazy(() => import('@/components/sections/Projects'));
+const GitHubActivity = lazy(() => import('@/components/sections/GitHubActivity'));
+const OffTheClock = lazy(() => import('@/components/sections/OffTheClock'));
 
 const Index = () => {
   useEffect(() => {
@@ -47,13 +50,13 @@ const Index = () => {
           {/* Order tells the story: career, then what shipped from it, then
               credentials, then open source, then the person. */}
           <Hero />
-          <ProfessionalJourney />
-          <ShippedWork />
-          <TechnicalExpertise />
-          <Certificates />
-          <Projects />
-          <GitHubActivity />
-          <OffTheClock />
+          <DeferredSection sectionId="professional-journey" minHeight={1400}><ProfessionalJourney /></DeferredSection>
+          <DeferredSection sectionId="shipped-work" minHeight={1100}><ShippedWork /></DeferredSection>
+          <DeferredSection sectionId="technical-expertise" minHeight={900}><TechnicalExpertise /></DeferredSection>
+          <DeferredSection sectionId="certificates" minHeight={600}><Certificates /></DeferredSection>
+          <DeferredSection sectionId="projects" minHeight={800}><Projects /></DeferredSection>
+          <DeferredSection sectionId="github-activity" minHeight={800}><GitHubActivity /></DeferredSection>
+          <DeferredSection sectionId="off-the-clock" minHeight={600}><OffTheClock /></DeferredSection>
         </main>
 
         <Footer />

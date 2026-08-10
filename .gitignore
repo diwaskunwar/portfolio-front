@@ -23,5 +23,10 @@ dist-ssr
 *.sln
 *.sw?
 
-
+# Environment files.
+# The previous single `*.env` pattern only covered names ENDING in .env, so
+# `.env.production`, `.env.backup`, and similar were committable.
+.env
+.env.*
 *.env
+!.env.example

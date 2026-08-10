@@ -36,6 +36,7 @@ const Navigation = () => {
   useEffect(() => {
     const ids = NAV_ITEMS.map(item => item.id);
     const ratios = new Map<string, number>();
+    const watched = new Set<Element>();
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -56,12 +57,27 @@ const Navigation = () => {
       { threshold: [0, 0.25, 0.5, 0.75, 1], rootMargin: '-45% 0px -45% 0px' }
     );
 
-    const observed = ids
-      .map(id => document.getElementById(id))
-      .filter((el): el is HTMLElement => el !== null);
-    observed.forEach(el => observer.observe(el));
+    const attach = () => {
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el && !watched.has(el)) {
+          watched.add(el);
+          observer.observe(el);
+        }
+      }
+    };
 
-    return () => observer.disconnect();
+    attach();
+
+    // Sections below the fold mount lazily, so they do not exist on the first
+    // pass. Watch the tree and observe each one as it arrives.
+    const mutations = new MutationObserver(attach);
+    mutations.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+      mutations.disconnect();
+    };
   }, []);
 
   // Lock body scroll while the overlay is open
@@ -84,7 +100,12 @@ const Navigation = () => {
   }, [isMenuOpen]);
 
   const goTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Falls back to the reserved placeholder when the section has not mounted
+    // yet, so a nav click is never a no-op.
+    const target =
+      document.getElementById(id) ??
+      document.querySelector(`[data-section-placeholder="${id}"]`);
+    target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     setIsMenuOpen(false);
   };
 
