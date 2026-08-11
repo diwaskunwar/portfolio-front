@@ -23,26 +23,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Diwas Kunwar | AI / ML Engineer</title>
+  <title>Diwas Kunwar — AI / ML Engineer</title>
   <meta name="description"
-    content="AI / ML Engineer building agentic systems, RAG, and production ML across education, legal, and pharmaceutical technology." />
+    content="Diwas Kunwar is an AI / ML Engineer in Kathmandu, Nepal, building agentic AI, RAG, and production machine learning across education, legal, and pharmaceutical technology." />
   <meta name="author" content="Diwas Kunwar" />
 
-  <meta property="og:title" content="Diwas Kunwar | AI / ML Engineer" />
+  <!-- Two domains serve this site, so one is named canonical. Without it
+       search engines treat them as duplicates and split the ranking between
+       them. Both stay reachable; only the indexed URL is consolidated. -->
+  <link rel="canonical" href="https://diwas-kunwar.com.np/" />
+
+  <meta property="og:site_name" content="Diwas Kunwar" />
+  <meta property="og:title" content="Diwas Kunwar — AI / ML Engineer" />
   <meta property="og:description"
     content="I build systems that solve real problems with AI and machine learning. Agents that plan and act, retrieval that cites its sources, models small enough to serve." />
   <meta property="og:type" content="profile" />
-  <meta property="og:image" content="/diwas.webp" />
-  <meta property="og:image:alt" content="Portrait of Diwas Kunwar" />
+  <meta property="profile:first_name" content="Diwas" />
+  <meta property="profile:last_name" content="Kunwar" />
+  <meta property="og:url" content="https://diwas-kunwar.com.np/" />
+  <!-- Absolute, and a purpose-built 1200x630 card. A relative path and a
+       square portrait made LinkedIn and X render the preview blank. -->
+  <meta property="og:image" content="https://diwas-kunwar.com.np/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Diwas Kunwar, AI / ML Engineer" />
 
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Diwas Kunwar | AI / ML Engineer" />
+  <meta name="twitter:title" content="Diwas Kunwar — AI / ML Engineer" />
   <meta name="twitter:description"
     content="I build systems that solve real problems with AI and machine learning. Agents that plan and act, retrieval that cites its sources, models small enough to serve." />
-  <meta name="twitter:image" content="/diwas.webp" />
+  <meta name="twitter:image" content="https://diwas-kunwar.com.np/og.png" />
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="/favicon.png">
+  <!-- Favicon. SVG first for modern browsers, PNG for the rest. -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
   <meta name="theme-color" content="#0a0a0c" />
   <meta name="color-scheme" content="dark" />
@@ -58,6 +73,77 @@
   <link rel="license" href="/llms.txt" />
 
   <!-- Fonts are self-hosted via @fontsource-variable (see src/main.tsx) -->
+
+  <!--
+    Person entity. This is what lets a search engine attach the name "Diwas
+    Kunwar" to a thing rather than to a string, which is what a name query
+    needs. sameAs is the important part: it ties this site to the GitHub,
+    LinkedIn and Hugging Face profiles so the accounts are understood as one
+    person instead of four unrelated results competing with each other.
+  -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": "https://diwas-kunwar.com.np/#diwas-kunwar",
+    "name": "Diwas Kunwar",
+    "givenName": "Diwas",
+    "familyName": "Kunwar",
+    "alternateName": ["Diwas", "Kunwar", "diwaskunwar"],
+    "jobTitle": "Senior AI Engineer",
+    "description": "AI / ML Engineer building agentic AI, multi-agent orchestration, RAG, and production machine learning.",
+    "url": "https://diwas-kunwar.com.np/",
+    "image": "https://diwas-kunwar.com.np/og.png",
+    "email": "mailto:diwas.kuwar@gmail.com",
+    "nationality": { "@type": "Country", "name": "Nepal" },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Kathmandu",
+      "addressCountry": "NP"
+    },
+    "worksFor": { "@type": "Organization", "name": "CantorDust", "url": "https://www.cantordust.org/" },
+    "alumniOf": {
+      "@type": "CollegeOrUniversity",
+      "name": "Kathmandu College of Technology, Tribhuvan University"
+    },
+    "knowsAbout": [
+      "Agentic AI",
+      "Multi-agent orchestration",
+      "Large language models",
+      "Retrieval augmented generation",
+      "Model finetuning",
+      "Quantization",
+      "MLOps",
+      "Backend engineering",
+      "Python",
+      "PyTorch",
+      "FastAPI",
+      "Kubernetes"
+    ],
+    "sameAs": [
+      "https://github.com/diwaskunwar",
+      "https://www.linkedin.com/in/diwas-kunwar/",
+      "https://huggingface.co/diwaskunwar10",
+      "https://diwaskunwar.info.np/"
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": "https://diwas-kunwar.com.np/#website",
+    "url": "https://diwas-kunwar.com.np/",
+    "name": "Diwas Kunwar",
+    "alternateName": "Diwas Kunwar — AI / ML Engineer",
+    "inLanguage": "en",
+    "author": { "@id": "https://diwas-kunwar.com.np/#diwas-kunwar" },
+    "copyrightHolder": { "@id": "https://diwas-kunwar.com.np/#diwas-kunwar" },
+    "copyrightYear": 2026,
+    "license": "https://diwas-kunwar.com.np/LICENSE.txt"
+  }
+  </script>
 </head>
 
 <body style="background:#0a0a0c">

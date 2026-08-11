@@ -4,6 +4,8 @@
 User-agent: *
 Allow: /
 
+Sitemap: https://diwas-kunwar.com.np/sitemap.xml
+
 # ---------------------------------------------------------------------------
 # Training and scraping crawlers: not welcome.
 # This is a request, not an enforcement mechanism. Well-behaved crawlers honour
