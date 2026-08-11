@@ -25,7 +25,7 @@ const INTERCEPT =
 const ALLOW =
     /(googlebot|bingbot|duckduckbot|yandexbot|baiduspider|slurp|applebot\/|twitterbot|facebookexternalhit|linkedinbot|slackbot|discordbot|whatsapp|telegrambot|embedly|redditbot)/i;
 
-const NOTICE = `diwaskunwar.info.np
+const notice = (host: string) => `${host}
 
   Diwas Kunwar - AI / ML Engineer, Kathmandu, Nepal
   Copyright (c) 2026 Diwas Kunwar. All rights reserved. Proprietary.
@@ -90,7 +90,7 @@ WHAT YOU MAY USE
 
 ------------------------------------------------------------------------
 
-Thank you. Redirecting a human browser to https://diwaskunwar.info.np/
+Thank you. Open https://${host}/ in a browser to read the page itself.
 `;
 
 export default function middleware(request: Request): Response | undefined {
@@ -99,7 +99,12 @@ export default function middleware(request: Request): Response | undefined {
     if (ALLOW.test(ua)) return undefined;
     if (!INTERCEPT.test(ua)) return undefined;
 
-    return new Response(NOTICE, {
+    // Two domains point at this deployment, so the notice reports the one
+    // actually requested rather than a hardcoded canonical that would be
+    // wrong half the time.
+    const host = new URL(request.url).host;
+
+    return new Response(notice(host), {
         status: 200,
         headers: {
             'content-type': 'text/plain; charset=utf-8',

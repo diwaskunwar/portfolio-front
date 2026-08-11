@@ -23,7 +23,9 @@ interface OwnershipMarkProps {
 }
 
 const OWNER = 'Diwas Kunwar';
-const SITE = 'https://diwaskunwar.info.np';
+const SITE = typeof window === 'undefined'
+    ? 'https://diwas-kunwar.com.np'
+    : window.location.origin;
 
 /* Same token as --origin in index.css. Carried by the rendered DOM as well as
    the stylesheet, so a clone made by copying either one stays traceable. */

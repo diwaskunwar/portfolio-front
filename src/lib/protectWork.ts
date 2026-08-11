@@ -9,7 +9,9 @@
  */
 
 const OWNER = 'Diwas Kunwar';
-const SITE = 'https://diwaskunwar.info.np';
+const SITE = typeof window === 'undefined'
+    ? 'https://diwas-kunwar.com.np'
+    : window.location.origin;
 
 /* Short selections are addresses, names, a command someone wants to run.
    Attribution on those is noise, so only substantial copies carry it. */
