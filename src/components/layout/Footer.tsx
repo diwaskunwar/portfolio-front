@@ -74,20 +74,24 @@ const Footer = () => {
             &copy; {currentYear} Diwas Kunwar
           </p>
 
-          {/* Credit where it is due, on both sides of the build. */}
+          {/* Credit, then the correction. Claude is struck through rather than
+              removed: the line is the joke, and the name that stands is the
+              one that answers for the work. */}
           <p className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[11px] tracking-[0.06em] text-muted-foreground">
             <span className="text-faint">Designed and developed by</span>
             <a
               href="https://claude.ai/code"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-foreground underline decoration-border underline-offset-4 transition-colors duration-200 hover:decoration-foreground"
+              /* Claude's brand coral, and the only colour on an otherwise
+                 monochrome page. Written as a literal rather than promoted to
+                 a token, because it is a brand mark and not part of the
+                 palette. The strike inherits currentColor, so the line is the
+                 same coral without a second declaration. */
+              className="font-medium text-[#D97757] line-through decoration-1 transition-opacity duration-200 hover:opacity-75"
             >
               Claude
             </a>
-            <span aria-hidden="true" className="text-faint">
-              &times;
-            </span>
             <span className="font-medium text-foreground">Diwas Kunwar</span>
           </p>
         </div>
