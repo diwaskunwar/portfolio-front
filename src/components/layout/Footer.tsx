@@ -69,9 +69,26 @@ const Footer = () => {
 
         {/* Privacy and Terms were buttons that went nowhere, so they are gone
             rather than left as dead controls. */}
-        <div className="mt-10 border-t border-border pt-7">
+        <div className="mt-10 flex flex-col gap-4 border-t border-border pt-7 sm:flex-row sm:items-center sm:justify-between">
           <p className="label-mono">
             &copy; {currentYear} Diwas Kunwar
+          </p>
+
+          {/* Credit where it is due, on both sides of the build. */}
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[11px] tracking-[0.06em] text-muted-foreground">
+            <span className="text-faint">Designed and developed by</span>
+            <a
+              href="https://claude.ai/code"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-foreground underline decoration-border underline-offset-4 transition-colors duration-200 hover:decoration-foreground"
+            >
+              Claude
+            </a>
+            <span aria-hidden="true" className="text-faint">
+              &times;
+            </span>
+            <span className="font-medium text-foreground">Diwas Kunwar</span>
           </p>
         </div>
       </div>

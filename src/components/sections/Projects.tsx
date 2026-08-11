@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { Code, ArrowRight } from 'lucide-react';
 import Section from '@/components/common/Section';
 import Container from '@/components/common/Container';
+import CommandLine from '@/components/common/CommandLine';
 import RepositoryCard from '@/components/github/RepositoryCard';
 import { GitHubRepo } from '@/types/github';
 import { useGithubData } from '@/hooks/useGithubData';
@@ -42,6 +43,7 @@ const Projects = () => {
         {/* Header. Distinct from "What I have shipped": this is the public
             repository trail, not the products that reached users. */}
         <div className="mb-14 max-w-2xl">
+          <CommandLine tone="prompt" className="mb-5">{'gh repo list diwaskunwar --source'}</CommandLine>
           <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-medium leading-[1.08] tracking-[-0.035em] text-foreground">
             Open source
           </h2>

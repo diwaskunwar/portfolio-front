@@ -5,12 +5,6 @@ interface SectionProps {
   id: string;
   className?: string;
   children: ReactNode;
-  /**
-   * Force a full-viewport minimum height. Only the hero wants this; on other
-   * sections it centres the content so every child lands on screen at once,
-   * which fires all their reveals simultaneously.
-   */
-  fullHeight?: boolean;
 }
 
 /**
@@ -22,13 +16,12 @@ interface SectionProps {
  * visible by the time the children began their own animation.
  */
 const Section = forwardRef<HTMLElement, SectionProps>(
-  ({ id, className, children, fullHeight = false }, ref) => (
+  ({ id, className, children }, ref) => (
     <section
       id={id}
       ref={ref}
       className={cn(
         'w-full bg-transparent',
-        fullHeight && 'flex min-h-[100dvh] flex-col items-center justify-center',
         className
       )}
     >

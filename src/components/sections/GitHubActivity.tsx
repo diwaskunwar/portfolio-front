@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { Github, Star, GitFork } from 'lucide-react';
 import Section from '@/components/common/Section';
 import Container from '@/components/common/Container';
+import CommandLine from '@/components/common/CommandLine';
 import Reveal, { TextReveal } from '@/components/common/Reveal';
 import CountUp from '@/components/common/CountUp';
 import ContributionsChart from './ContributionsChart';
@@ -38,6 +39,7 @@ const GitHubActivity = () => {
     <Section id="github-activity" className="py-28 md:py-36">
       <Container className="w-full">
         <div className="mb-16 max-w-2xl">
+          <CommandLine tone="prompt" className="mb-5">{'git shortlog -sn --all'}</CommandLine>
           <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-medium leading-[1.08] tracking-[-0.035em] text-foreground">
             <TextReveal text="On GitHub" />
           </h2>

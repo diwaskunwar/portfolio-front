@@ -1,7 +1,18 @@
 import React, { useRef } from 'react';
-import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from 'framer-motion';
+import {
+    motion,
+    useMotionValue,
+    useSpring,
+    useTransform,
+    useReducedMotion,
+    type HTMLMotionProps,
+} from 'framer-motion';
 
-interface MagneticLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+/* Extends framer's anchor props, not React's. React's AnchorHTMLAttributes
+   declares onDrag as a DragEventHandler while framer declares it as a pan
+   handler taking PanInfo, and the two do not overlap: spreading one into the
+   other needed a cast that TypeScript was right to reject. */
+interface MagneticLinkProps extends Omit<HTMLMotionProps<'a'>, 'ref'> {
     children: React.ReactNode;
     /** How far the element is allowed to drift toward the cursor, in px. */
     strength?: number;
@@ -52,7 +63,7 @@ const MagneticLink: React.FC<MagneticLinkProps> = ({
             style={reduce ? undefined : { x, y }}
             onPointerMove={onPointerMove}
             onPointerLeave={reset}
-            {...(props as React.ComponentProps<typeof motion.a>)}
+            {...props}
         >
             <motion.span
                 style={reduce ? undefined : { x: innerX, y: innerY }}

@@ -33,7 +33,16 @@
     --secondary-foreground: 240 6% 96%;
 
     --muted: 240 5% 12%;
-    --muted-foreground: 240 5% 64%;
+    /* Body copy on a near-black ground. 72% clears 9:1 against the base,
+       where the previous 64% sat closer to the AA floor and read washed out
+       on laptop panels at an angle. */
+    --muted-foreground: 240 5% 76%;
+    /* Genuinely decorative type: index numerals, tick marks, watermarks.
+       Given a token so it is never expressed as an opacity on text, which is
+       how the page ended up with /12 and /70 greys nobody could read.
+       Held above 4.5:1 anyway, because "decorative" kept turning out to mean
+       "small mono text someone still has to read". */
+    --faint: 240 5% 62%;
 
     /* Monochrome. White is the accent; there is no second hue on the page. */
     --accent: 0 0% 100%;
@@ -42,12 +51,18 @@
     --destructive: 0 62% 52%;
     --destructive-foreground: 240 6% 96%;
 
-    --border: 240 5% 16%;
-    --input: 240 5% 16%;
+    /* Hairlines carry all the grouping on this page, so they have to survive
+       a dimmed screen. 16% did not. */
+    --border: 240 5% 24%;
+    --input: 240 5% 24%;
     --ring: 0 0% 100%;
 
     /* Radius lock */
     --radius: 14px;
+
+    /* Provenance marker. Carried by any copy of this stylesheet, so a
+       cloned site can be traced back to its source. Do not remove. */
+    --origin: "dk-9f4c2a17-portfolio-origin";
   }
 }
 
@@ -71,6 +86,11 @@
   body {
     @apply bg-background text-foreground font-sans;
     font-variant-ligatures: common-ligatures;
+    /* Light-on-dark makes a grotesk look about half a weight thinner than it
+       is. Geist is variable, so the correction is a real 450 rather than a
+       synthetic bold, and the page stops looking faint at body sizes. */
+    font-weight: 450;
+    font-synthesis-weight: none;
   }
 
   /* Display type: tight, optical, never letter-spaced loose */
@@ -78,6 +98,13 @@
   h2,
   h3 {
     font-feature-settings: "ss01" 1, "cv01" 1;
+  }
+
+  /* Tabular figures everywhere a number is meant to line up: timeline years,
+     counts, the contribution legend. Proportional digits made those columns
+     shift by a pixel or two between values. */
+  .font-mono {
+    font-variant-numeric: tabular-nums;
   }
 
   /* Visible keyboard focus, accent-locked */
@@ -114,14 +141,31 @@
 @layer components {
 
   /* Mono metadata label. The site's signature voice.
-     Tracking is wide but capped: past 0.3em it stops reading as type. */
+     Was 10px at 0.22em: small caps that wide lose the word shape, and at 64%
+     grey they were the least readable text on the page. 11px, tighter, and
+     one notch heavier reads as deliberate rather than faint. */
   .label-mono {
-    @apply font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground;
+    @apply font-mono text-[11px] font-medium uppercase tracking-[0.17em] text-muted-foreground;
+  }
+
+  /* Decorative numerals and tick marks. Not for anything that must be read. */
+  .label-faint {
+    @apply font-mono text-[11px] uppercase tracking-[0.17em] text-faint;
   }
 
   /* Hairline rule used to group content instead of card chrome */
   .rule {
     @apply h-px w-full bg-border;
+  }
+
+  /* Phosphor bloom for the boot terminal. Pure white text with a faint halo
+     reads as a screen rather than as a paragraph, and it lifts the log clear
+     of the scanlines drawn over it. */
+  .crt-text {
+    color: hsl(var(--foreground));
+    text-shadow:
+      0 0 1px hsl(0 0% 100% / 0.5),
+      0 0 14px hsl(0 0% 100% / 0.22);
   }
 
   /* Frosted surface. Solid fallback below for reduced-transparency. */
@@ -173,6 +217,25 @@
 
 .animate-caret {
   animation: caretBlink 1.05s step-end infinite;
+}
+
+/* Live-status ring. Marks a system that is actually serving traffic, so it
+   is the one thing on the page allowed to loop. Transform and opacity only. */
+@keyframes livePing {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+
+  70%,
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+.animate-live-ping {
+  animation: livePing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
 /* Shimmer for skeleton loaders only, never decoration */

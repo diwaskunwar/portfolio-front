@@ -1,12 +1,14 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useSpring, useReducedMotion } from 'framer-motion';
-import { GraduationCap, Briefcase } from 'lucide-react';
+import { GraduationCap, Briefcase, GitBranch } from 'lucide-react';
 import Section from '@/components/common/Section';
 import Container from '@/components/common/Container';
+import CommandLine from '@/components/common/CommandLine';
 import Reveal, { TextReveal } from '@/components/common/Reveal';
 
 interface Entry {
-  kind: 'study' | 'work';
+  /** `detour` is the self-taught stretch: no institution, no employer. */
+  kind: 'study' | 'work' | 'detour';
   /** Large chapter marker. Free text so an undated chapter is not invented. */
   year: string;
   title: string;
@@ -15,48 +17,76 @@ interface Entry {
   period: string;
   /** Aside, such as a promotion track or an overlap with study. */
   note?: string;
+  /** The chapter as a developer would type it. Read before the prose is. */
+  command: string;
+  /** Prompt symbol. null where the chapter is source, not shell. */
+  prefix?: string | null;
   current?: boolean;
   domains?: string[];
   description: string[];
   skills?: string[];
 }
 
-/* One chronological thread. Study and work are the same story: the first job
-   started during the final year of the degree, so splitting them into
-   separate sections broke the sequence in half. */
+/* One chronological thread. Study, the self-taught detour, and work are the
+   same story: the path ran through JavaScript and PHP before it reached
+   Python, and the first job started during the final year of the degree.
+   Splitting any of that into separate sections broke the sequence. */
 const ENTRIES: Entry[] = [
   {
     kind: 'study',
     year: 'Earlier',
     title: 'High School',
+    command: '10 CLS\n20 PRINT "HELLO, WORLD"\n30 GOTO 20\nRUN',
+    prefix: null,
     org: 'Caspian Valley College, Kumaripati',
     location: 'Lalitpur, Nepal',
     period: 'Completed',
-    description: ['Management with Computer Science. The first time code was on the timetable.'],
+    description: [
+      'Management with Computer Science. The first time code was on the timetable, and the first time it was more interesting than the timetable.',
+    ],
   },
   {
     kind: 'study',
     year: '2019',
     title: 'Bachelor in Computer Application',
+    command: 'git checkout -b bca-2019   # ran 5 years, not 4',
     org: 'Kathmandu College of Technology, Tribhuvan University',
     location: 'Bhaktapur, Nepal',
     period: 'Sep 2019 - Jun 2024',
+    note: 'Five years, not four. COVID took the extra one',
     description: [
-      'Five years of computer applications, and the point where Python stopped being coursework and started being the tool.',
+      'A four-year degree that ran to five, because the world closed halfway through it.',
+      'Campus shut, lectures moved to a laptop, and the syllabus slowed to a crawl. What that actually bought was time, and most of what stuck got learned in it rather than in class.',
     ],
+  },
+  {
+    kind: 'detour',
+    year: '2020',
+    title: 'Learning it in the wrong order',
+    command: 'npm create vite@latest && php artisan serve',
+    org: 'Self-taught, between lockdowns',
+    period: '2020 - 2023',
+    note: 'The part nobody puts on a resume',
+    description: [
+      'Nobody starts at machine learning. The first thing that worked was JavaScript, then React, because a page that changes the instant you click it is the fastest reward programming gives a beginner.',
+      'PHP and Laravel came next, on the backend, where the reward is quieter and the bugs live a lot longer. That is where the habit of caring how a system actually runs came from.',
+      'Python and AI/ML sat in the background the whole time. Borrowed notebooks, small models, no plan, and no idea it would become the job. It was just the tab that never got closed.',
+    ],
+    skills: ['JavaScript', 'React', 'PHP', 'Laravel', 'MySQL', 'Python'],
   },
   {
     kind: 'work',
     year: '2023',
     title: 'Data Science Intern',
+    command: 'pip install pandas scrapy fastapi',
     org: 'Inspiring Lab',
     location: 'Lalitpur, Nepal',
     period: 'Nov 2023 - Mar 2024',
-    note: 'Began during the final year of the degree',
+    note: 'Final year of the degree. The side interest became the job',
     domains: ['Data pipelines', 'Visualization'],
     description: [
-      'Where the working half of the story starts, one year before graduating.',
-      'Built automated ingestion and preprocessing pipelines to clean multi-source datasets, and dashboards to track what they produced.',
+      'The background tab turned into the discipline, one year before graduating.',
+      'Built automated ingestion and preprocessing pipelines to clean multi-source datasets, and the dashboards that made their output legible to people who were never going to read a notebook.',
     ],
     skills: ['Python', 'Pandas', 'Selenium', 'Scrapy', 'FastAPI', 'Git'],
   },
@@ -64,6 +94,7 @@ const ENTRIES: Entry[] = [
     kind: 'work',
     year: '2024',
     title: 'Machine Learning Engineer',
+    command: 'python finetune.py --model domain-llm --quantize int8',
     org: 'Next AI',
     location: 'Kathmandu, Nepal',
     period: 'Jun 2024 - Mar 2026',
@@ -83,6 +114,7 @@ const ENTRIES: Entry[] = [
     kind: 'work',
     year: '2026',
     title: 'Senior AI Engineer',
+    command: 'hermes run --agents 6 --trace --reverse-engineer',
     org: 'CantorDust',
     location: 'Kathmandu, Nepal',
     period: 'Apr 2026 to now',
@@ -98,6 +130,14 @@ const ENTRIES: Entry[] = [
     ],
   },
 ];
+
+/* Icon and label per chapter type, so the three kinds are distinguishable
+   without reading a word of the entry. */
+const KIND = {
+  study: { Icon: GraduationCap, kindLabel: 'Study' },
+  work: { Icon: Briefcase, kindLabel: 'Work' },
+  detour: { Icon: GitBranch, kindLabel: 'Detour' },
+} as const;
 
 const ProfessionalJourney = () => {
   const reduce = useReducedMotion();
@@ -120,13 +160,16 @@ const ProfessionalJourney = () => {
     <Section id="professional-journey" className="py-24 md:py-36">
       <Container className="w-full">
         <div className="mb-16 max-w-2xl md:mb-20">
+          <CommandLine tone="prompt" className="mb-5">{'git log --reverse --oneline --author=diwas'}</CommandLine>
           <h2 className="text-[clamp(1.85rem,5vw,3.5rem)] font-medium leading-[1.08] tracking-[-0.035em] text-foreground">
             <TextReveal text="How I got here" />
           </h2>
           <Reveal delay={0.15}>
             <p className="mt-5 text-base leading-relaxed text-muted-foreground md:text-lg">
-              School, then a degree, then a job that started before the degree
-              finished. One line, in order.
+              It did not start with Python. It started with a page that changed
+              when you clicked it, went through PHP, took five years of degree
+              instead of four, and only turned into machine learning at the
+              end. One line, in the order it actually happened.
             </p>
           </Reveal>
         </div>
@@ -142,7 +185,7 @@ const ProfessionalJourney = () => {
           />
 
           {ENTRIES.map((entry) => {
-            const Icon = entry.kind === 'study' ? GraduationCap : Briefcase;
+            const { Icon, kindLabel } = KIND[entry.kind];
             return (
               <Reveal
                 as="li"
@@ -151,8 +194,9 @@ const ProfessionalJourney = () => {
                 amount={0.3}
                 className="group relative pb-16 last:pb-0 md:pb-24"
               >
-                {/* Node. Filled marks the present role; study chapters read as
-                    outlined, so the two kinds are distinguishable at a glance. */}
+                {/* Node. Filled marks the present role, study chapters are
+                    outlined, and the detour is a hollow ring, so the three
+                    kinds are distinguishable before anything is read. */}
                 <span
                   aria-hidden="true"
                   className={[
@@ -162,20 +206,27 @@ const ProfessionalJourney = () => {
                       ? 'bg-foreground'
                       : entry.kind === 'study'
                         ? 'border border-muted-foreground bg-background'
-                        : 'bg-border group-hover:scale-125 group-hover:bg-muted-foreground',
+                        : entry.kind === 'detour'
+                          ? 'border border-dashed border-foreground/50 bg-background group-hover:rotate-45'
+                          : 'bg-border group-hover:scale-125 group-hover:bg-muted-foreground',
                   ].join(' ')}
                 />
 
                 <div className="mb-3 flex flex-wrap items-baseline gap-x-4 gap-y-2 md:mb-4">
-                  <span className="font-mono text-[clamp(1.75rem,7vw,4rem)] font-medium leading-none tracking-[-0.04em] text-foreground/12">
+                  {/* Chapter marker. Bright enough to read as a date, dim
+                      enough that it stays behind the job title. */}
+                  <span className="font-mono text-[clamp(1.75rem,7vw,4rem)] font-medium leading-none tracking-[-0.04em] text-foreground/35 transition-colors duration-500 group-hover:text-foreground/60">
                     {entry.year}
                   </span>
                   <span className="label-mono flex items-center gap-2">
                     <Icon size={13} strokeWidth={1.75} />
-                    {entry.kind === 'study' ? 'Study' : 'Work'}
+                    {kindLabel}
                   </span>
                   {entry.current && (
-                    <span className="label-mono text-foreground/70">Now</span>
+                    <span className="label-mono flex items-center gap-2 text-foreground">
+                      <span className="h-1.5 w-1.5 rounded-full bg-foreground" />
+                      Now
+                    </span>
                   )}
                 </div>
 
@@ -186,7 +237,7 @@ const ProfessionalJourney = () => {
                   <span className="label-mono shrink-0 sm:text-right">{entry.period}</span>
                 </div>
 
-                <p className="mt-2 text-[15px] text-foreground/80 md:text-base">
+                <p className="mt-2 text-[15px] text-foreground md:text-base">
                   {entry.org}
                   {entry.location && (
                     <>
@@ -196,8 +247,15 @@ const ProfessionalJourney = () => {
                   )}
                 </p>
 
+                {/* The chapter as a command. Reads faster than the prose and
+                    says the same thing to anyone who has used a terminal. */}
+                <CommandLine className="mt-4" prefix={entry.prefix}>
+                  {entry.command}
+                </CommandLine>
+
                 {entry.note && (
-                  <p className="mt-2 font-mono text-[11px] uppercase leading-relaxed tracking-[0.14em] text-muted-foreground/70">
+                  <p className="mt-2.5 flex items-start gap-2.5 font-mono text-[11px] uppercase leading-relaxed tracking-[0.14em] text-muted-foreground">
+                    <span aria-hidden="true" className="mt-[0.55em] h-px w-4 shrink-0 bg-faint" />
                     {entry.note}
                   </p>
                 )}
@@ -207,7 +265,7 @@ const ProfessionalJourney = () => {
                     {entry.domains.map((domain) => (
                       <li
                         key={domain}
-                        className="rounded-full bg-surface-raised px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-foreground/75"
+                        className="rounded-full bg-surface-raised px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-foreground"
                       >
                         {domain}
                       </li>
@@ -232,7 +290,7 @@ const ProfessionalJourney = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, amount: 0.6 }}
                         transition={{ duration: 0.4, delay: reduce ? 0 : s * 0.035 }}
-                        className="rounded-full border border-border px-3 py-1.5 font-mono text-[10px] tracking-[0.06em] text-muted-foreground transition-colors duration-200 hover:border-foreground/40 hover:text-foreground sm:text-[11px] sm:px-3.5"
+                        className="rounded-full border border-border px-3 py-1.5 font-mono text-[11px] tracking-[0.04em] text-muted-foreground transition-colors duration-200 hover:border-foreground/40 hover:text-foreground sm:px-3.5 sm:text-[12px]"
                       >
                         {skill}
                       </motion.li>

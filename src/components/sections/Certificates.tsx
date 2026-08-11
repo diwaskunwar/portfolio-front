@@ -2,8 +2,10 @@ import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import Section from '@/components/common/Section';
 import Container from '@/components/common/Container';
+import CommandLine from '@/components/common/CommandLine';
 import Reveal, { TextReveal } from '@/components/common/Reveal';
 import { useProfile } from '@/store/ProfileContext';
+import type { ProfileData } from '@/services/apiService';
 
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -16,16 +18,43 @@ const formatIssued = (issued?: { month?: number; year?: number }) => {
   return month ? `${month} ${issued.year}` : `${issued.year}`;
 };
 
+type Certificate = NonNullable<ProfileData['certifications']>[number];
+
+/* Held here because the profile feed does not carry it. Every field is off
+   the real Coursera record, and the link resolves to the public verification
+   page, which is the only reason it earns a place on the page. */
+const KNOWN: Certificate[] = [
+  {
+    name: 'Supervised Machine Learning: Regression and Classification',
+    authority: 'DeepLearning.AI and Stanford University',
+    issueDate: { month: 5, year: 2024 },
+    credentialId: '8HFWUFCXZS8C',
+    url: 'https://www.coursera.org/account/accomplishments/verify/8HFWUFCXZS8C',
+  },
+];
+
 const Certificates = () => {
   const { profileData } = useProfile();
-  // Read from the profile rather than a hard-coded list. The previous list
-  // named certificates that do not appear anywhere in the profile data.
-  const certificates = profileData?.certifications ?? [];
+
+  /* Merged rather than replaced, so anything the profile feed starts
+     returning appears without a code change. Credential ID is the identity
+     where there is one, since the same course is titled differently by
+     different sources. */
+  const certificates = [...KNOWN];
+  for (const cert of profileData?.certifications ?? []) {
+    const seen = certificates.some((known) =>
+      cert.credentialId
+        ? known.credentialId === cert.credentialId
+        : known.name === cert.name
+    );
+    if (!seen) certificates.push(cert);
+  }
 
   return (
     <Section id="certificates" className="py-28 md:py-36">
       <Container className="w-full">
         <div className="mb-16 max-w-2xl">
+          <CommandLine tone="prompt" className="mb-5">{'gpg --verify credential.sig'}</CommandLine>
           <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-medium leading-[1.08] tracking-[-0.035em] text-foreground">
             <TextReveal text="Certificates" />
           </h2>
@@ -56,9 +85,18 @@ const Certificates = () => {
                       {formatIssued(cert.issueDate)}
                     </span>
 
-                    <h3 className="text-xl font-medium tracking-[-0.02em] text-foreground md:col-span-6 md:text-2xl">
-                      {cert.name}
-                    </h3>
+                    <div className="md:col-span-6">
+                      <h3 className="text-xl font-medium tracking-[-0.02em] text-foreground md:text-2xl">
+                        {cert.name}
+                      </h3>
+                      {cert.credentialId && (
+                        // The ID is what makes the claim checkable, so it is
+                        // printed rather than hidden behind the link.
+                        <p className="mt-2 font-mono text-[11px] tracking-[0.06em] text-faint">
+                          Credential {cert.credentialId}
+                        </p>
+                      )}
+                    </div>
 
                     <span className="text-sm text-muted-foreground md:col-span-3">
                       {cert.authority}

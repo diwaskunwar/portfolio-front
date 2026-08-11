@@ -171,7 +171,7 @@ const BootSequence: React.FC<BootSequenceProps> = ({ speed = 260 }) => {
             {/* Scanlines. Fixed and non-interactive, so no scroll repaint cost. */}
             <div
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-0 opacity-[0.05]"
+                className="pointer-events-none absolute inset-0 opacity-[0.045]"
                 style={{
                     backgroundImage:
                         'repeating-linear-gradient(0deg, #fff 0px, #fff 1px, transparent 1px, transparent 3px)',
@@ -188,10 +188,12 @@ const BootSequence: React.FC<BootSequenceProps> = ({ speed = 260 }) => {
                 <pre
                     ref={scrollRef}
                     aria-hidden="true"
-                    // Longest line is 52 characters. The step down to 10px keeps
-                    // it on one line at 390px wide, so the log never wraps and
-                    // stops reading as a terminal.
-                    className="max-h-[70vh] overflow-hidden whitespace-pre-wrap font-mono text-[10px] leading-[1.7] text-foreground/85 sm:text-[12px] sm:leading-[1.75] md:text-[13px]"
+                    // Longest line is 52 characters, so the size is capped by
+                    // what fits on one line at 390px wide: the log must never
+                    // wrap or it stops reading as a terminal. Full-strength
+                    // white with a phosphor halo, since the scanline overlay
+                    // sits on top of it and a dimmed grey disappeared under it.
+                    className="crt-text max-h-[70vh] overflow-hidden whitespace-pre-wrap font-mono text-[10.5px] font-medium leading-[1.75] sm:text-[13px] sm:leading-[1.8] md:text-[14px]"
                 >
                     {SCRIPT.slice(0, shown)}
                     {!exiting && (
@@ -210,7 +212,7 @@ const BootSequence: React.FC<BootSequenceProps> = ({ speed = 260 }) => {
             <button
                 type="button"
                 onClick={dismiss}
-                className="absolute bottom-6 right-6 rounded-full border border-border px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:border-foreground/35 hover:text-foreground sm:bottom-8 sm:right-8"
+                className="absolute bottom-6 right-6 rounded-full border border-border px-5 py-2.5 font-mono text-[11px] font-medium uppercase tracking-[0.17em] text-muted-foreground transition-colors hover:border-foreground/35 hover:text-foreground sm:bottom-8 sm:right-8"
             >
                 Skip
             </button>

@@ -1,0 +1,33 @@
+Copyright (c) 2026 Diwas Kunwar. All rights reserved.
+
+PROPRIETARY — NOT OPEN SOURCE
+
+This repository contains the source of the personal portfolio of Diwas Kunwar,
+including its visual design, layout, animation, interaction design, written
+copy, and code.
+
+No licence is granted. Without prior written permission from the copyright
+holder you may not, in whole or in substantial part:
+
+  1. copy, reproduce, publish, or distribute this work;
+  2. create derivative works from it, including ports to another framework,
+     restyled variants, or "inspired by" reproductions of its layout,
+     component structure, motion design, or copy;
+  3. use it as a template, starter, or theme;
+  4. use it as a style reference or design input for another person's or
+     organisation's site;
+  5. include it in a dataset used to train, finetune, or evaluate a machine
+     learning model, or supply it to such a system as reference material for
+     generating a similar design.
+
+Text and data mining rights are expressly reserved (TDM Reservation Protocol;
+Article 4(3), EU Directive 2019/790).
+
+Factual information about Diwas Kunwar — roles, employers, dates, skills,
+public project names, and contact details — may be quoted with attribution and
+a link to the source. That is what a portfolio is for.
+
+Third-party dependencies listed in package.json remain under their own
+licences, which are unaffected by this notice.
+
+Licensing enquiries: diwas.kuwar@gmail.com
