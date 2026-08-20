@@ -2,8 +2,8 @@ import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import Section from '@/components/common/Section';
 import Container from '@/components/common/Container';
-import CommandLine from '@/components/common/CommandLine';
-import Reveal, { TextReveal } from '@/components/common/Reveal';
+import SectionHeader from '@/components/common/SectionHeader';
+import Reveal from '@/components/common/Reveal';
 
 interface Interest {
   name: string;
@@ -48,20 +48,16 @@ const OffTheClock = () => {
   const reduce = useReducedMotion();
 
   return (
-    <Section id="off-the-clock" className="py-28 md:py-36">
+    <Section id="off-the-clock" className="py-10 sm:py-12 md:py-14 xl:py-16">
       <Container className="w-full">
-        <div className="mb-16 max-w-2xl">
-          <CommandLine tone="prompt" className="mb-5">{'sudo systemctl stop training.service'}</CommandLine>
-          <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-medium leading-[1.08] tracking-[-0.035em] text-foreground">
-            <TextReveal text="Away from the terminal" />
-          </h2>
-          <Reveal delay={0.15}>
-            <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
-              A training run takes hours, and nobody improves it by watching the
-              loss curve. This is where the rest of the time goes.
-            </p>
-          </Reveal>
-        </div>
+        <SectionHeader
+          chapter="off-the-clock"
+          command="sudo systemctl stop training.service"
+          title="Away from the terminal"
+        >
+          A training run takes hours, and nobody improves it by watching the
+          loss curve. This is where the rest of the time goes.
+        </SectionHeader>
 
         {/* Hairline-divided rows rather than a card grid, so this section does
             not repeat the chip-and-node layout of the timeline above. The row

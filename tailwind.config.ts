@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
 export default {
 	darkMode: ["class"],
@@ -18,6 +19,18 @@ export default {
 			}
 		},
 		extend: {
+			/* Two additions at the ends of the default scale, because the
+			   defaults leave both extremes unaddressed.
+
+			   `xs` covers the 320-390px phones (SE, mini, older Androids),
+			   which otherwise sit on the unprefixed base styles alongside a
+			   430px Pro Max and get the same padding and type as a device a
+			   third wider. `3xl` is the point past which a 1536px shell on a
+			   27-inch display reads as a narrow column floating in grey. */
+			screens: {
+				xs: '400px',
+				'3xl': '1800px',
+			},
 			transitionTimingFunction: {
 				// Site-wide easing. Named so it is not written as an ambiguous
 				// arbitrary value at every call site.
@@ -132,5 +145,22 @@ export default {
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	future: {
+		/* Compiles every `hover:` utility inside `@media (hover: hover)`.
+		   Without it a tap on a touch screen leaves the element stuck in its
+		   hover state until you tap elsewhere, which on this page means cards
+		   and nav items staying lit after a finger has moved on. */
+		hoverOnlyWhenSupported: true,
+	},
+	plugins: [
+		require("tailwindcss-animate"),
+		/* A tablet is wider than the `md` breakpoint but has no pointer that
+		   can hover. Width alone therefore cannot decide whether a hover-only
+		   control is safe to show, and the nav rail was unreachable on an
+		   iPad because of exactly that. */
+		plugin(({ addVariant }) => {
+			addVariant('can-hover', '@media (hover: hover) and (pointer: fine)');
+			addVariant('no-hover', '@media not all and (hover: hover) and (pointer: fine)');
+		}),
+	],
 } satisfies Config;

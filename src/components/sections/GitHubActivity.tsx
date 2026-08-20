@@ -1,78 +1,105 @@
 import React, { memo, useEffect, useRef } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Github, Star, GitFork } from 'lucide-react';
+import { Github, Users } from 'lucide-react';
 import Section from '@/components/common/Section';
 import Container from '@/components/common/Container';
-import CommandLine from '@/components/common/CommandLine';
-import Reveal, { TextReveal } from '@/components/common/Reveal';
+import SectionHeader from '@/components/common/SectionHeader';
+import Reveal from '@/components/common/Reveal';
 import CountUp from '@/components/common/CountUp';
 import ContributionsChart from './ContributionsChart';
 import { useGithubData } from '@/hooks/useGithubData';
+import { useContributionCalendar } from '@/hooks/useContributionCalendar';
 import { GITHUB_URL } from '@/lib/links';
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
+/**
+ * Two data sources, two very different trust levels.
+ *
+ * The account totals (public repos, followers) come from an unauthenticated
+ * call straight to GitHub's REST API — one request, no credential, safe to
+ * make from the browser. The contribution calendar comes from this site's
+ * own edge function (`api/github-contributions.ts`), which holds a GitHub
+ * token server side and calls GitHub's GraphQL API once, cached for an hour
+ * at Vercel's edge. That token must never reach the browser — see the
+ * function's own comment for why — so the client only ever talks to our own
+ * `/api/github-contributions`, never to GitHub with a credential attached.
+ *
+ * This section used to fetch the full repo list a second way and build an
+ * approximate twelve-month calendar out of per-repo commit pages: roughly
+ * twenty unauthenticated GitHub requests on every page load, against a
+ * budget of sixty per hour shared across every visitor behind the same IP.
+ * That tripped the limit on its own. The repositories themselves, with real
+ * per-repo stars and forks, live in Open source below; this section is just
+ * the calendar and the two totals GitHub's cheapest endpoint gives up front.
+ */
 const GitHubActivity = () => {
-  const { repos, fetchTopRepos } = useGithubData(false);
+  const { profile, fetchProfile } = useGithubData(false);
+  const contributions = useContributionCalendar();
   const reduce = useReducedMotion();
   const requested = useRef(false);
 
-  /* Public endpoints only, no credential. This section used to require a
-     token that shipped in the bundle. */
   useEffect(() => {
     if (requested.current) return;
     requested.current = true;
-    fetchTopRepos(6);
+    fetchProfile();
+    contributions.fetchContributions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const topRepos = repos.data ?? [];
-
-  /* Derived from what the public API actually returns. Nothing invented. */
-  const totalStars = topRepos.reduce((sum, r) => sum + (r.stars ?? 0), 0);
-  const totalForks = topRepos.reduce((sum, r) => sum + (r.forks ?? 0), 0);
-  const languages = Array.from(
-    new Set(topRepos.map((r) => r.language).filter(Boolean))
-  );
-
   return (
-    <Section id="github-activity" className="py-28 md:py-36">
+    <Section id="github-activity" className="py-10 sm:py-12 md:py-14 xl:py-16">
       <Container className="w-full">
-        <div className="mb-16 max-w-2xl">
-          <CommandLine tone="prompt" className="mb-5">{'git shortlog -sn --all'}</CommandLine>
-          <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-medium leading-[1.08] tracking-[-0.035em] text-foreground">
-            <TextReveal text="On GitHub" />
-          </h2>
-          <Reveal delay={0.15}>
-            <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
-              Public repositories, pulled without a token.
-            </p>
-          </Reveal>
-        </div>
+        <SectionHeader
+          chapter="github-activity"
+          command="curl -s api.github.com/users/diwaskunwar"
+          title="On GitHub"
+        >
+          A year of real activity, and the account totals GitHub reports.
+          The repositories themselves, with real stars and forks on each
+          one, are in Open source below.
+        </SectionHeader>
 
-        {/* Commit art. The calendar shape is real, the pattern is drawn. */}
-        <Reveal className="mb-20" amount={0.15}>
+        {/* The calendar. Loading, error, and data states mirror the pattern
+            every other fetched section on this page uses. */}
+        <Reveal className="mb-10 md:mb-12 xl:mb-14" amount={0.15}>
           <div className="rounded-lg border border-border p-6 md:p-8">
-            <ContributionsChart greeting="HELLO WORLD" />
-            <p className="mt-6 border-t border-border pt-5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
-              Commit art, not real history
-            </p>
+            {contributions.loading && !contributions.data ? (
+              <div className="skeleton h-[168px] rounded-lg" />
+            ) : contributions.error ? (
+              <div className="flex flex-col items-start gap-4 py-6">
+                <p className="text-muted-foreground">Could not load commit history just now.</p>
+                <button
+                  onClick={() => contributions.fetchContributions()}
+                  className="rounded-full border border-border px-6 py-2.5 text-sm font-semibold text-foreground transition-colors hover:border-foreground/35 hover:bg-surface-raised"
+                >
+                  Try again
+                </button>
+              </div>
+            ) : contributions.data ? (
+              <ContributionsChart data={contributions.data.days} />
+            ) : null}
+            {contributions.data && (
+              <p className="mt-6 border-t border-border pt-5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                <CountUp to={contributions.data.total} duration={1} /> contributions in the last year
+              </p>
+            )}
           </div>
         </Reveal>
 
-        {repos.loading && topRepos.length === 0 && (
-          <div className="grid gap-4 md:grid-cols-2">
-            {Array.from({ length: 4 }).map((_, i) => (
+        {profile.loading && !profile.data && (
+          <div className="grid grid-cols-2 gap-4 md:gap-5">
+            {Array.from({ length: 2 }).map((_, i) => (
               <div key={i} className="skeleton h-28 rounded-lg" />
             ))}
           </div>
         )}
 
-        {!repos.loading && repos.error && (
+        {!profile.loading && profile.error && (
           <div className="rounded-lg border border-border p-10">
             <p className="text-muted-foreground">Could not reach GitHub just now.</p>
             <button
-              onClick={() => fetchTopRepos(6)}
+              onClick={() => fetchProfile()}
               className="mt-5 rounded-full border border-border px-6 py-2.5 text-sm font-semibold text-foreground transition-colors hover:border-foreground/35 hover:bg-surface-raised"
             >
               Try again
@@ -80,46 +107,28 @@ const GitHubActivity = () => {
           </div>
         )}
 
-        {topRepos.length > 0 && (
-          <>
-            <div className="mb-14 grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-3">
-              {[
-                { label: 'Public repositories', value: topRepos.length, icon: Github },
-                { label: 'Stars', value: totalStars, icon: Star },
-                { label: 'Forks', value: totalForks, icon: GitFork },
-              ].map((stat, i) => (
-                <motion.div
-                  key={stat.label}
-                  initial={reduce ? false : { opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.5 }}
-                  transition={{ duration: 0.5, ease: EASE, delay: reduce ? 0 : i * 0.07 }}
-                  className="bg-background p-6"
-                >
-                  <stat.icon size={16} strokeWidth={1.5} className="text-muted-foreground" />
-                  <p className="mt-4 font-mono text-3xl font-medium tracking-[-0.03em] text-foreground">
-                    <CountUp to={stat.value} duration={1.2} />
-                  </p>
-                  <p className="label-mono mt-2">{stat.label}</p>
-                </motion.div>
-              ))}
-            </div>
-
-            {languages.length > 0 && (
-              <Reveal className="mb-14">
-                <ul className="flex flex-wrap gap-2">
-                  {languages.map((lang) => (
-                    <li
-                      key={lang}
-                      className="rounded-full border border-border px-4 py-2 font-mono text-[11px] tracking-[0.06em] text-muted-foreground"
-                    >
-                      {lang}
-                    </li>
-                  ))}
-                </ul>
-              </Reveal>
-            )}
-          </>
+        {profile.data && (
+          <div className="mb-10 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-border bg-border md:mb-12 xl:mb-14">
+            {[
+              { label: 'Public repositories', value: profile.data.public_repos, icon: Github },
+              { label: 'Followers', value: profile.data.followers, icon: Users },
+            ].map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={reduce ? false : { opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.5, ease: EASE, delay: reduce ? 0 : i * 0.07 }}
+                className="bg-background p-6"
+              >
+                <stat.icon size={16} strokeWidth={1.5} className="text-muted-foreground" />
+                <p className="mt-4 font-mono text-3xl font-medium tracking-[-0.03em] text-foreground">
+                  <CountUp to={stat.value} duration={1.2} />
+                </p>
+                <p className="label-mono mt-2">{stat.label}</p>
+              </motion.div>
+            ))}
+          </div>
         )}
 
         <Reveal>

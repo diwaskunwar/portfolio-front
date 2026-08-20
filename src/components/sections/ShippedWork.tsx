@@ -9,8 +9,9 @@ import {
 import { ArrowUpRight, Layers } from 'lucide-react';
 import Section from '@/components/common/Section';
 import Container from '@/components/common/Container';
+import SectionHeader from '@/components/common/SectionHeader';
 import CommandLine from '@/components/common/CommandLine';
-import Reveal, { TextReveal } from '@/components/common/Reveal';
+import Reveal from '@/components/common/Reveal';
 import CountUp from '@/components/common/CountUp';
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -375,25 +376,22 @@ const Card: React.FC<{
 };
 
 const ShippedWork = () => (
-  <Section id="shipped-work" className="py-28 md:py-36">
+  <Section id="shipped-work" className="py-10 sm:py-12 md:py-14 xl:py-16">
     <Container className="w-full">
-      <div className="mb-14 max-w-3xl">
-        <CommandLine tone="prompt" className="mb-5">{'docker ps --filter status=running'}</CommandLine>
-        <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-medium leading-[1.08] tracking-[-0.035em] text-foreground">
-          <TextReveal text="What I have shipped" />
-        </h2>
-        <Reveal delay={0.15}>
-          <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
-            None of this is a side project. Every platform below was built
-            inside a company, runs against real users in a regulated industry,
-            and {LIVE_COUNT} of them are serving traffic at a public URL you
-            can open right now.
-          </p>
-        </Reveal>
-      </div>
+      <SectionHeader
+        chapter="shipped-work"
+        command="docker ps --filter status=running"
+        title="What I have shipped"
+        wide
+      >
+        None of this is a side project. Every platform below was built inside a
+        company, runs against real users in a regulated industry, and{' '}
+        {LIVE_COUNT} of them are serving traffic at a public URL you can open
+        right now.
+      </SectionHeader>
 
       {/* The claim above, counted. Numbers derive from the list itself. */}
-      <div className="mb-20 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-4">
+      <div className="mb-10 md:mb-12 xl:mb-14 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-4">
         {FACTS.map((fact, i) => (
           <Reveal key={fact.label} delay={i * 0.07} className="bg-background p-6 md:p-7">
             <p className="font-mono text-4xl font-medium tracking-[-0.04em] text-foreground md:text-5xl">
@@ -406,7 +404,7 @@ const ShippedWork = () => (
 
       {/* The three industries, stated before the products that prove them.
           Each cell lights on its own beat, left to right. */}
-      <div className="mb-20 grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-3">
+      <div className="mb-10 md:mb-12 xl:mb-14 grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-3">
         {DOMAINS.map((domain, i) => (
           <Reveal
             key={domain.name}
@@ -431,16 +429,16 @@ const ShippedWork = () => (
       {/* Rhythm: one flagship, then a pair, then a trio. Six items, six cells.
           Index numbers run 01 to 06 straight through, so the three rows read
           as one sequence rather than three unrelated grids. */}
-      <div className="space-y-5">
+      <div className="space-y-4 md:space-y-5">
         <Card product={FLAGSHIP} index={1} featured />
 
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid gap-4 md:gap-5 md:grid-cols-2">
           {MAJOR.map((product, i) => (
             <Card key={product.name} product={product} index={i + 2} delay={i * 0.1} />
           ))}
         </div>
 
-        <div className="grid gap-5 md:grid-cols-3">
+        <div className="grid gap-4 md:gap-5 md:grid-cols-3">
           {SUPPORTING.map((product, i) => (
             <Card key={product.name} product={product} index={i + 4} delay={i * 0.09} />
           ))}
@@ -450,7 +448,7 @@ const ShippedWork = () => (
       {/* Says out loud why two cards have no link, so the missing address
           reads as context rather than as the weaker end of the list. */}
       <Reveal delay={0.1}>
-        <p className="mt-12 flex max-w-3xl items-start gap-4 border-t border-border pt-6 text-[15px] leading-relaxed text-muted-foreground">
+        <p className="mt-10 flex max-w-3xl items-start gap-4 border-t border-border pt-6 text-[15px] leading-relaxed text-muted-foreground md:mt-12 xl:mt-14">
           <Layers
             size={16}
             strokeWidth={1.75}

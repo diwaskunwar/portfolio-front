@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { Code, ArrowRight } from 'lucide-react';
 import Section from '@/components/common/Section';
 import Container from '@/components/common/Container';
-import CommandLine from '@/components/common/CommandLine';
+import SectionHeader from '@/components/common/SectionHeader';
 import RepositoryCard from '@/components/github/RepositoryCard';
 import { GitHubRepo } from '@/types/github';
 import { useGithubData } from '@/hooks/useGithubData';
@@ -38,21 +38,15 @@ const Projects = () => {
   }, [repos.data]);
 
   return (
-    <Section id="projects" className="relative overflow-hidden py-28 md:py-36">
+    <Section id="projects" className="relative overflow-hidden py-10 sm:py-12 md:py-14 xl:py-16">
       <Container className="relative z-10 w-full">
         {/* Header. Distinct from "What I have shipped": this is the public
             repository trail, not the products that reached users. */}
-        <div className="mb-14 max-w-2xl">
-          <CommandLine tone="prompt" className="mb-5">{'gh repo list diwaskunwar --source'}</CommandLine>
-          <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-medium leading-[1.08] tracking-[-0.035em] text-foreground">
-            Open source
-          </h2>
-          <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
-            Public repositories and things built for their own sake.
-          </p>
-        </div>
+        <SectionHeader chapter="projects" command="gh repo list diwaskunwar --source" title="Open source">
+          Public repositories and things built for their own sake.
+        </SectionHeader>
 
-        <div className="mb-12 flex justify-start">
+        <div className="mb-10 md:mb-12 xl:mb-14 flex justify-start">
           <div className="inline-flex overflow-hidden rounded-full border border-border">
             <button
               onClick={() => setViewType('top')}
@@ -77,7 +71,7 @@ const Projects = () => {
 
         {/* Loading. Skeletons match the card grid, so nothing shifts on arrival. */}
         {repos.loading && (!displayedRepos || displayedRepos.length === 0) && (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 md:gap-5 md:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="skeleton h-44 rounded-lg" />
             ))}
@@ -111,14 +105,14 @@ const Projects = () => {
         {/* Grid */}
         {!repos.error && displayedRepos && displayedRepos.length > 0 && (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:gap-5 md:grid-cols-2 lg:grid-cols-3">
               {displayedRepos.map((repo, index) => (
                 <RepositoryCard key={repo.name} repo={repo} index={index} />
               ))}
             </div>
 
             {/* Actions */}
-            <div className="mt-14 flex flex-col items-start gap-6 sm:flex-row sm:items-center">
+            <div className="mt-10 flex flex-col items-start gap-6 sm:flex-row sm:items-center md:mt-12 xl:mt-14">
               <a
                 href={GITHUB_URL}
                 target="_blank"

@@ -44,7 +44,10 @@ const colsForClarity = (clarity: number) =>
    The first pass is deliberately too coarse to hold a face. It stacks, holds
    for a beat, collapses, and the second pass rebuilds at full resolution: the
    render fails and retries, which is the same story the boot terminal tells. */
-const BUILD_MS = 3200;
+// Was 3200. The fail-and-retry story survives the trim intact (every
+// phase below is a fraction of this), and the face resolves a full
+// second sooner, which matters for a reader who is skimming.
+const BUILD_MS = 2200;
 const FIRST_CLARITY = 0.35; // too few blocks to resolve anything
 const COURSE_SPAN = 0.6; // share of a pass spent walking bottom row to top
 const JITTER = 0.16; // per-block scatter, so a course is not a rigid line

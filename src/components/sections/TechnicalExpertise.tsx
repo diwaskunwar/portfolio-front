@@ -2,8 +2,9 @@ import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import Section from '@/components/common/Section';
 import Container from '@/components/common/Container';
+import SectionHeader from '@/components/common/SectionHeader';
 import CommandLine from '@/components/common/CommandLine';
-import Reveal, { TextReveal } from '@/components/common/Reveal';
+import Reveal from '@/components/common/Reveal';
 
 interface Group {
   title: string;
@@ -115,20 +116,16 @@ const TechnicalExpertise = () => {
   const reduce = useReducedMotion();
 
   return (
-    <Section id="technical-expertise" className="py-28 md:py-36">
+    <Section id="technical-expertise" className="py-10 sm:py-12 md:py-14 xl:py-16">
       <Container className="w-full">
-        <div className="mb-16 max-w-2xl">
-          <CommandLine tone="prompt" className="mb-5">{'uv pip list && which docker kubectl'}</CommandLine>
-          <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-medium leading-[1.08] tracking-[-0.035em] text-foreground">
-            <TextReveal text="What I work with" />
-          </h2>
-          <Reveal delay={0.15}>
-            <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
-              Grouped by the part of the system it belongs to. Six layers,{' '}
-              {TOTAL} things.
-            </p>
-          </Reveal>
-        </div>
+        <SectionHeader
+          chapter="technical-expertise"
+          command="uv pip list && which docker kubectl"
+          title="What I reach for"
+        >
+          Grouped by the part of the system it belongs to. Six layers, {TOTAL}{' '}
+          things.
+        </SectionHeader>
 
         {/* Numbered rows, and each group's tools set as a ruled column list
             rather than wrapped pills. Forty-odd chips in a ragged flow are a

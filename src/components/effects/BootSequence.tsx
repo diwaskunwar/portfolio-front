@@ -1,6 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { markBooted } from '@/lib/bootState';
 
+/* Off. The log reads well to an engineer and reads as a loading screen to
+   everyone else, and the people this page is for are mostly the everyone
+   else — a hiring reader meets a black terminal before they meet the work.
+   Kept whole rather than deleted; set this to true to bring it back. */
+const ENABLED = false;
+
 /* Plays once per browser session. Repeat visitors and internal navigation
    should never sit through it twice. */
 const SESSION_KEY = 'boot-sequence-played';
@@ -45,6 +51,7 @@ interface BootSequenceProps {
 const BootSequence: React.FC<BootSequenceProps> = ({ speed = 260 }) => {
     // Decided synchronously so the overlay never flashes for repeat visitors.
     const [active, setActive] = useState(() => {
+        if (!ENABLED) return false;
         if (typeof window === 'undefined') return false;
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
         try {

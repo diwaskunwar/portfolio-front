@@ -3,8 +3,9 @@ import { motion, useScroll, useSpring, useReducedMotion } from 'framer-motion';
 import { GraduationCap, Briefcase, GitBranch } from 'lucide-react';
 import Section from '@/components/common/Section';
 import Container from '@/components/common/Container';
+import SectionHeader from '@/components/common/SectionHeader';
 import CommandLine from '@/components/common/CommandLine';
-import Reveal, { TextReveal } from '@/components/common/Reveal';
+import Reveal from '@/components/common/Reveal';
 
 interface Entry {
   /** `detour` is the self-taught stretch: no institution, no employer. */
@@ -157,22 +158,18 @@ const ProfessionalJourney = () => {
   });
 
   return (
-    <Section id="professional-journey" className="py-24 md:py-36">
+    <Section id="professional-journey" className="py-10 sm:py-12 md:py-14 xl:py-16">
       <Container className="w-full">
-        <div className="mb-16 max-w-2xl md:mb-20">
-          <CommandLine tone="prompt" className="mb-5">{'git log --reverse --oneline --author=diwas'}</CommandLine>
-          <h2 className="text-[clamp(1.85rem,5vw,3.5rem)] font-medium leading-[1.08] tracking-[-0.035em] text-foreground">
-            <TextReveal text="How I got here" />
-          </h2>
-          <Reveal delay={0.15}>
-            <p className="mt-5 text-base leading-relaxed text-muted-foreground md:text-lg">
-              It did not start with Python. It started with a page that changed
-              when you clicked it, went through PHP, took five years of degree
-              instead of four, and only turned into machine learning at the
-              end. One line, in the order it actually happened.
-            </p>
-          </Reveal>
-        </div>
+        <SectionHeader
+          chapter="professional-journey"
+          command="git log --reverse --oneline --author=diwas"
+          title="How I got here"
+        >
+          It did not start with Python. It started with a page that changed when
+          you clicked it, went through PHP, took five years of degree instead of
+          four, and only turned into machine learning at the end. One line, in
+          the order it actually happened.
+        </SectionHeader>
 
         <ol ref={railRef} className="relative pl-7 sm:pl-8 md:pl-16">
           {/* Static track */}
@@ -192,7 +189,7 @@ const ProfessionalJourney = () => {
                 key={`${entry.org}-${entry.year}`}
                 y={40}
                 amount={0.3}
-                className="group relative pb-16 last:pb-0 md:pb-24"
+                className="group relative pb-14 last:pb-0 sm:pb-16 md:pb-20 xl:pb-24"
               >
                 {/* Node. Filled marks the present role, study chapters are
                     outlined, and the detour is a hollow ring, so the three

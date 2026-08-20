@@ -8,24 +8,34 @@ import {
   Github,
   Award,
   Coffee,
+  FlaskConical,
+  Send,
   Menu,
   X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { scrollToSection } from '@/lib/scrollToSection';
+import { CHAPTERS, chapterLabel, type ChapterId } from '@/lib/chapters';
 
-/* Order mirrors the page: career, what shipped from it, credentials,
-   open source, then the person. */
+/* Order mirrors the page: career, what shipped from it, how he works,
+   credentials, open source, the person, then the ask. */
 const NAV_ITEMS = [
   { id: 'hero', label: 'Home', icon: Home },
   { id: 'professional-journey', label: 'How I Got Here', icon: Briefcase },
   { id: 'shipped-work', label: 'What I Have Shipped', icon: Rocket },
+  { id: 'how-i-brew', label: 'How I Brew', icon: FlaskConical },
   { id: 'technical-expertise', label: 'Technical Expertise', icon: Code },
   { id: 'certificates', label: 'Certificates', icon: Award },
   { id: 'projects', label: 'Open Source', icon: FolderGit2 },
   { id: 'github-activity', label: 'GitHub Activity', icon: Github },
   { id: 'off-the-clock', label: 'Away From The Terminal', icon: Coffee },
+  { id: 'get-in-touch', label: 'Get In Touch', icon: Send },
 ] as const;
+
+/* Home is in the nav but is not a chapter, so the label lookup has to be
+   guarded rather than assumed. */
+const isChapter = (id: string): id is ChapterId =>
+  (CHAPTERS as readonly string[]).includes(id);
 
 const Navigation = () => {
   const [activeSection, setActiveSection] = useState<string>('hero');
@@ -114,11 +124,17 @@ const Navigation = () => {
           Nothing here occupies layout. At rest the rail is a column of thin
           marks in the page's own left margin; the full labelled nav is an
           absolutely positioned panel that only exists on hover or keyboard
-          focus, and is allowed to cover content because it is transient. */}
+          focus, and is allowed to cover content because it is transient.
+
+          Gated on `can-hover`, not on width alone. An iPad clears the `md`
+          breakpoint, so it used to be handed this rail and have the mobile
+          trigger taken away — and since the markers are aria-hidden spans
+          with no hover to reveal the panel, that left the whole page with no
+          working navigation on a tablet. */}
       {/* pr-5 is a hover cushion, not spacing: it widens the pointer target
           over the container's own gutter without moving the marks inward,
           which would put them under the content edge at md widths. */}
-      <div className="group/rail fixed left-3 top-1/2 z-[110] hidden -translate-y-1/2 py-4 pr-5 md:block">
+      <div className="group/rail fixed left-3 top-1/2 z-[110] hidden -translate-y-1/2 py-4 pr-5 can-hover:md:block">
         {/* Position indicator only. Not focusable: the panel below carries
             every interaction, so tabbing cannot land on an invisible target. */}
         <div
@@ -171,13 +187,15 @@ const Navigation = () => {
         </nav>
       </div>
 
-      {/* ---------------- Mobile: floating trigger ---------------- */}
+      {/* ---------------- Touch and narrow: floating trigger ----------------
+          Shown by default and withdrawn only where the rail can actually be
+          reached, so every touch device keeps it at every width. */}
       <button
         type="button"
         onClick={() => setIsMenuOpen(true)}
         aria-label={`${activeItem.label}. Open navigation menu`}
         aria-haspopup="dialog"
-        className="fixed right-4 top-4 z-[120] rounded-full bg-foreground p-3.5 text-background md:hidden"
+        className="fixed right-4 top-4 z-[120] rounded-full bg-foreground p-3.5 text-background sm:right-6 sm:top-6 can-hover:md:hidden"
       >
         <Menu size={20} strokeWidth={1.75} />
       </button>
@@ -188,7 +206,7 @@ const Navigation = () => {
           role="dialog"
           aria-modal="true"
           aria-label="Navigation"
-          className="fixed inset-0 z-[150] flex flex-col justify-center bg-background/95 px-8 backdrop-blur-2xl md:px-16"
+          className="fixed inset-0 z-[150] flex flex-col justify-center overflow-y-auto bg-background/95 px-6 py-20 backdrop-blur-2xl xs:px-8 md:px-16"
         >
           <button
             type="button"
@@ -209,12 +227,18 @@ const Navigation = () => {
                     type="button"
                     onClick={() => goTo(item.id)}
                     className={cn(
-                      'group flex w-full items-center gap-5 border-b border-border py-6 text-left transition-colors',
+                      'group flex w-full items-center gap-4 border-b border-border py-4 text-left transition-colors xs:gap-5 sm:py-5 md:py-6',
                       isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
                     )}
                   >
+                    {/* Chapter number where there is one, so the menu is a
+                        table of contents. Home is the cover and has none, and
+                        keeps the width with a spacer so nothing is ragged. */}
+                    <span className="label-faint w-6 shrink-0 tabular-nums" aria-hidden="true">
+                      {isChapter(item.id) ? chapterLabel(item.id) : ''}
+                    </span>
                     <Icon size={20} strokeWidth={1.5} className="shrink-0" />
-                    <span className="text-2xl font-medium tracking-[-0.02em] md:text-3xl">
+                    <span className="text-xl font-medium tracking-[-0.02em] xs:text-2xl md:text-3xl">
                       {item.label}
                     </span>
                     {isActive && (

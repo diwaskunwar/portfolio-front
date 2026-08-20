@@ -8,8 +8,8 @@ interface Line {
     text: string;
 }
 
-const CPS = 58; // characters per second while typing
-const PAUSE_MS = 130; // beat between finished lines
+const CPS = 82; // characters per second while typing
+const PAUSE_MS = 85; // beat between finished lines
 const HISTORY = 14; // lines kept before the top is dropped
 
 /* The render narrates itself: a first attempt at a grid too coarse to hold a

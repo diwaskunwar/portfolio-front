@@ -13,11 +13,13 @@ import OwnershipMark from '@/components/common/OwnershipMark';
 const ParticleBackground = lazy(() => import('@/components/effects/ParticleBackground'));
 const ProfessionalJourney = lazy(() => import('@/components/sections/ProfessionalJourney'));
 const ShippedWork = lazy(() => import('@/components/sections/ShippedWork'));
+const HowIBrew = lazy(() => import('@/components/sections/HowIBrew'));
 const TechnicalExpertise = lazy(() => import('@/components/sections/TechnicalExpertise'));
 const Certificates = lazy(() => import('@/components/sections/Certificates'));
 const Projects = lazy(() => import('@/components/sections/Projects'));
 const GitHubActivity = lazy(() => import('@/components/sections/GitHubActivity'));
 const OffTheClock = lazy(() => import('@/components/sections/OffTheClock'));
+const GetInTouch = lazy(() => import('@/components/sections/GetInTouch'));
 
 const Index = () => {
   useEffect(() => {
@@ -83,10 +85,21 @@ const Index = () => {
 
           <DeferredSection sectionId="shipped-work" minHeight={1100}><ShippedWork /></DeferredSection>
 
-          <OwnershipMark at="shipped/expertise">
+          <OwnershipMark at="shipped/how-i-brew">
             Those are real products, built inside real companies, serving real
             users. Reproducing the cards that describe them does not give
             anyone the products, only the appearance of having shipped them.
+          </OwnershipMark>
+
+          {/* Placed here on purpose: the proof comes first, and only then is
+              anyone interested in what the person is like. Reversed, it reads
+              as a stranger asserting things about himself. */}
+          <DeferredSection sectionId="how-i-brew" minHeight={900}><HowIBrew /></DeferredSection>
+
+          <OwnershipMark at="how-i-brew/expertise">
+            These are one person's working principles, argued for and paid for.
+            Lifting them into another portfolio is claiming someone else's
+            character, which is a stranger thing to steal than a layout.
           </OwnershipMark>
 
           <DeferredSection sectionId="technical-expertise" minHeight={900}><TechnicalExpertise /></DeferredSection>
@@ -108,6 +121,10 @@ const Index = () => {
           </OwnershipMark>
 
           <DeferredSection sectionId="off-the-clock" minHeight={600}><OffTheClock /></DeferredSection>
+
+          {/* The ending. Without it the page stopped on a list of hobbies and
+              never said what it wanted from the reader. */}
+          <DeferredSection sectionId="get-in-touch" minHeight={700}><GetInTouch /></DeferredSection>
 
           <OwnershipMark at="document/end">
             This design belongs to Diwas Kunwar and to nobody else. It was made

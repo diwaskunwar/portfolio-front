@@ -1,13 +1,15 @@
 import React, { memo, useMemo } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { ContributionDay } from '@/services/githubClient';
-import { buildGreetingCalendar } from '@/lib/greetingCalendar';
+
+export interface ContributionDay {
+  date: string;
+  count: number;
+  level: number;
+}
 
 interface ContributionsChartProps {
-  data?: ContributionDay[];
-  /** Drawn when no data is supplied. */
-  greeting?: string;
+  data: ContributionDay[];
 }
 
 const LEVEL_CLASS = [
@@ -18,17 +20,35 @@ const LEVEL_CLASS = [
   'bg-foreground',
 ];
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTH_ABBR = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const DAY_LABELS = ['Mon', 'Wed', 'Fri'];
 
-const ContributionsChart = ({ data, greeting = 'HELLO WORLD' }: ContributionsChartProps) => {
+/**
+ * Renders whatever real calendar it is given. No drawn fallback — a section
+ * with nothing to show says so and offers a retry, the same as every other
+ * data-backed section on the page, rather than filling the space with art
+ * that looks like a real history.
+ */
+const ContributionsChart = ({ data }: ContributionsChartProps) => {
   const reduce = useReducedMotion();
 
-  // Built once so re-renders never reshuffle the noise around the letters.
-  const chartData = useMemo(
-    () => (data && data.length > 0 ? data : buildGreetingCalendar(greeting)),
-    [data, greeting]
-  );
+  /* The fetch window is the trailing 12 months from today, so it rarely
+     starts in January. Read the months straight off the data instead of
+     assuming a calendar-aligned year. */
+  const monthLabels = useMemo(() => {
+    const seen = new Set<string>();
+    const labels: string[] = [];
+    for (const day of data) {
+      // Date-only ISO strings parse as UTC midnight; reading the UTC month
+      // keeps a day from sliding into the wrong month in an earlier timezone.
+      const month = MONTH_ABBR[new Date(day.date).getUTCMonth()];
+      if (!seen.has(month)) {
+        seen.add(month);
+        labels.push(month);
+      }
+    }
+    return labels;
+  }, [data]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -44,17 +64,15 @@ const ContributionsChart = ({ data, greeting = 'HELLO WORLD' }: ContributionsCha
         <div className="min-w-0 flex-1 overflow-x-auto pb-2">
           <div className="w-max">
             {/* w-full inside the w-max wrapper matches the grid's width, so
-                the labels span the same distance as the 53 columns below. */}
+                the labels span the same distance as the columns below. */}
             <div className="mb-3 flex w-full justify-between font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
-              {MONTHS.map((m) => (
-                <span key={m}>{m}</span>
+              {monthLabels.map((m, i) => (
+                <span key={`${m}-${i}`}>{m}</span>
               ))}
             </div>
 
             <div className="grid grid-flow-col grid-rows-7 gap-[3px]">
-              {chartData.map((day, i) => {
-                // Column index drives the delay, so the year fills in left to
-                // right and the word writes itself.
+              {data.map((day, i) => {
                 const column = Math.floor(i / 7);
                 return (
                   <motion.div
@@ -66,7 +84,7 @@ const ContributionsChart = ({ data, greeting = 'HELLO WORLD' }: ContributionsCha
                     transition={{
                       duration: 0.3,
                       ease: [0.16, 1, 0.3, 1],
-                      delay: reduce ? 0 : column * 0.016,
+                      delay: reduce ? 0 : column * 0.012,
                     }}
                     className={cn(
                       'h-[11px] w-[11px] rounded-[2px] transition-transform duration-200 hover:scale-150 md:h-[12px] md:w-[12px]',

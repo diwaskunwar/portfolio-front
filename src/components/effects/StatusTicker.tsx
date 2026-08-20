@@ -7,10 +7,10 @@ interface StatusTickerProps {
     className?: string;
 }
 
-const TYPE_CPS = 42; // characters per second while writing
-const ERASE_CPS = 110; // faster on the way out, as a real backspace is
-const HOLD_MS = 2400; // beat on the finished line before it clears
-const GAP_MS = 260; // beat on an empty line before the next one starts
+const TYPE_CPS = 64; // characters per second while writing
+const ERASE_CPS = 150; // faster on the way out, as a real backspace is
+const HOLD_MS = 1600; // beat on the finished line before it clears
+const GAP_MS = 180; // beat on an empty line before the next one starts
 
 type Phase = 'typing' | 'holding' | 'erasing' | 'gap';
 

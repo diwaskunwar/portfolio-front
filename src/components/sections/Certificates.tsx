@@ -2,8 +2,8 @@ import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import Section from '@/components/common/Section';
 import Container from '@/components/common/Container';
-import CommandLine from '@/components/common/CommandLine';
-import Reveal, { TextReveal } from '@/components/common/Reveal';
+import SectionHeader from '@/components/common/SectionHeader';
+import Reveal from '@/components/common/Reveal';
 import { useProfile } from '@/store/ProfileContext';
 import type { ProfileData } from '@/services/apiService';
 
@@ -51,19 +51,11 @@ const Certificates = () => {
   }
 
   return (
-    <Section id="certificates" className="py-28 md:py-36">
+    <Section id="certificates" className="py-10 sm:py-12 md:py-14 xl:py-16">
       <Container className="w-full">
-        <div className="mb-16 max-w-2xl">
-          <CommandLine tone="prompt" className="mb-5">{'gpg --verify credential.sig'}</CommandLine>
-          <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-medium leading-[1.08] tracking-[-0.035em] text-foreground">
-            <TextReveal text="Certificates" />
-          </h2>
-          <Reveal delay={0.15}>
-            <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
-              Verifiable credentials. Every one links to its record.
-            </p>
-          </Reveal>
-        </div>
+        <SectionHeader chapter="certificates" command="gpg --verify credential.sig" title="Certificates">
+          Verifiable credentials. Every one links to its record.
+        </SectionHeader>
 
         {certificates.length === 0 ? (
           <div className="rounded-lg border border-border p-10">

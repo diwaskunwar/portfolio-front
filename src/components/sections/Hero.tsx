@@ -26,15 +26,47 @@ const SOCIALS = [
   { href: EMAIL_URL, label: 'Email', Icon: Mail },
 ] as const;
 
-/* The full span of the work, not just the retrieval slice. Six items, so the
-   strip divides evenly at two, three, and six columns with no ragged cell. */
+/* The full span of the work, not just the retrieval slice.
+
+   Two registers per cell, because two different people read this page. An
+   engineer scans the term and knows exactly what it means. A hiring manager
+   or a founder reads the line under it and learns what it buys them. Neither
+   has to decode the other's vocabulary. */
 const CAPABILITIES = [
-  'Agentic AI',
-  'LLM systems & RAG',
-  'Training & finetuning',
-  'Deployment & MLOps',
-  'Latency & optimization',
-  'Backend, frontend & CI/CD',
+  {
+    term: 'Agentic AI',
+    plain: 'Software that plans a task, takes the steps, and reports back.',
+  },
+  {
+    term: 'LLM systems & RAG',
+    plain: 'Answers drawn from your own documents, with every source cited.',
+  },
+  {
+    term: 'Training & finetuning',
+    plain: 'Models taught your domain instead of guessing at it.',
+  },
+  {
+    term: 'Deployment & MLOps',
+    plain: 'Shipped, monitored, and kept running long after launch day.',
+  },
+  {
+    term: 'Latency & cost',
+    plain: 'Faster answers on smaller hardware, so the bill stays sane.',
+  },
+  {
+    term: 'Backend, frontend & CI/CD',
+    plain: 'The whole product around the model, not just the model.',
+  },
+] as const;
+
+/* The five-second read, for someone deciding whether to keep scrolling.
+   Plain counts, no vocabulary to learn. These are the same figures the
+   shipped-work section derives from its own list — if a product is added
+   there, update them here too. */
+const PROOF = [
+  { value: '6', label: 'platforms in production' },
+  { value: '3', label: 'regulated industries' },
+  { value: '4', label: 'live, open them yourself' },
 ] as const;
 
 const REST_CLARITY = 0.7;
@@ -65,27 +97,38 @@ const Hero = () => {
   const [portraitHovered, setPortraitHovered] = useState(false);
 
   /* Entry stagger. Motivated by hierarchy: name, discipline, what he does,
-     the two things worth clicking, then the supporting range. */
+     the two things worth clicking, then the supporting range.
+
+     Deliberately brisk. The whole entrance lands inside a second, because a
+     reader who came here to judge someone's work should be reading it, not
+     waiting on a curtain. The earlier timing spent over two seconds before
+     the paragraph was legible. */
   const container: Variants = {
     hidden: {},
     show: {
-      transition: { staggerChildren: reduceMotion ? 0 : 0.08, delayChildren: 0.08 },
+      transition: { staggerChildren: reduceMotion ? 0 : 0.05, delayChildren: 0.03 },
     },
   };
 
   const item: Variants = {
-    hidden: reduceMotion ? { opacity: 1 } : { opacity: 0, y: 18 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } },
+    hidden: reduceMotion ? { opacity: 1 } : { opacity: 0, y: 14 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } },
   };
 
   if (loading || !profileData) {
     return (
-      <Section id="hero" className="pt-16 pb-10 md:pt-20">
+      <Section
+        id="hero"
+        className="pt-12 pb-10 xs:pt-14 sm:pt-16 md:pt-20 md:pb-14 xl:pt-24 xl:pb-16"
+      >
         <Container className="w-full">
-          {/* Skeleton mirrors the real layout so nothing shifts on load (CLS) */}
+          {/* Skeleton mirrors the real layout so nothing shifts on load (CLS).
+              Its breakpoints have to track the real ones or the placeholder
+              stacks at a width where the content does not, which is the shift
+              it exists to prevent. */}
           <div className="skeleton h-4 w-full max-w-md rounded-full" />
-          <div className="mt-12 grid grid-cols-1 gap-14 lg:grid-cols-12 lg:gap-20">
-            <div className="space-y-6 lg:col-span-7">
+          <div className="mt-8 grid grid-cols-1 gap-10 md:mt-12 md:grid-cols-12 md:gap-8 lg:gap-16">
+            <div className="space-y-6 md:col-span-7">
               <div className="skeleton h-20 w-full max-w-xl rounded-md md:h-28" />
               <div className="skeleton h-20 w-full max-w-lg rounded-md md:h-28" />
               <div className="skeleton h-4 w-full max-w-md rounded-full" />
@@ -94,8 +137,8 @@ const Hero = () => {
                 <div className="skeleton h-12 w-40 rounded-full" />
               </div>
             </div>
-            <div className="lg:col-span-5">
-              <div className="skeleton aspect-square w-full max-w-[340px] rounded-lg" />
+            <div className="md:col-span-5">
+              <div className="skeleton mx-auto aspect-square w-full max-w-[300px] rounded-lg xs:max-w-[340px] md:ml-auto md:mr-0 xl:max-w-[380px] 3xl:max-w-[420px]" />
             </div>
           </div>
           <div className="skeleton mt-16 h-20 w-full rounded-lg" />
@@ -108,7 +151,10 @@ const Hero = () => {
   const current = profileData.experience?.companies?.[0];
 
   return (
-    <Section id="hero" className="pt-16 pb-10 md:pt-20">
+    <Section
+      id="hero"
+      className="pt-12 pb-10 xs:pt-14 sm:pt-16 md:pt-20 md:pb-14 xl:pt-24 xl:pb-16"
+    >
       <Container className="w-full">
         <motion.div
           variants={container}
@@ -128,56 +174,75 @@ const Hero = () => {
             </span>
           </motion.div>
 
-          <div className="mt-8 grid grid-cols-1 items-start gap-10 md:mt-12 lg:grid-cols-12 lg:gap-16">
+          <div className="mt-8 grid grid-cols-1 items-start gap-10 md:mt-12 md:grid-cols-12 md:gap-8 lg:gap-16">
             {/* ---------------- Left: the message ---------------- */}
-            <div className="lg:col-span-7">
-              {/* Name, one word per line. Each letter rides up from behind its
-                  own mask, so the name assembles rather than fading in. */}
+            <div className="md:col-span-7">
+              {/* Name, one word per line, each riding up from behind its own
+                  mask. This was per-letter, which cost about a second and a
+                  half and, worse, put every letter into the parent's stagger
+                  queue — the paragraph below was waiting on eleven slots that
+                  had nothing to do with it. Per word reads the same and the
+                  whole heading is standing in under half a second. */}
               <h1
                 aria-label={name}
-                className="text-[clamp(2.75rem,9.5vw,6rem)] font-medium leading-[0.94] tracking-[-0.045em] text-foreground"
+                className="text-[clamp(2.5rem,8.5vw,7rem)] font-medium leading-[0.94] tracking-[-0.045em] text-foreground"
               >
-                {name.split(' ').map((word, w, all) => (
-                  <span key={`${word}-${w}`} className="block">
-                    {word.split('').map((char, c) => (
-                      <span
-                        key={`${char}-${c}`}
-                        aria-hidden="true"
-                        className="inline-block overflow-hidden pb-[0.1em] align-bottom"
-                      >
-                        <motion.span
-                          className="inline-block"
-                          variants={{
-                            hidden: reduceMotion ? { y: '0%' } : { y: '110%' },
-                            show: {
-                              y: '0%',
-                              transition: {
-                                duration: 0.85,
-                                ease: EASE,
-                                delay: reduceMotion ? 0 : c * 0.035 + w * 0.1,
-                              },
-                            },
-                          }}
-                        >
-                          {char}
-                        </motion.span>
-                      </span>
-                    ))}
-                    {/* Real space between words, so the heading stays copyable */}
-                    {w < all.length - 1 ? ' ' : null}
+                {name.split(' ').map((word, w) => (
+                  <span
+                    key={`${word}-${w}`}
+                    aria-hidden="true"
+                    className="block overflow-hidden pb-[0.08em]"
+                  >
+                    <motion.span
+                      className="inline-block"
+                      variants={{
+                        hidden: reduceMotion ? { y: '0%' } : { y: '110%' },
+                        show: {
+                          y: '0%',
+                          transition: {
+                            duration: 0.62,
+                            ease: EASE,
+                            delay: reduceMotion ? 0 : w * 0.07,
+                          },
+                        },
+                      }}
+                    >
+                      {word}
+                    </motion.span>
                   </span>
                 ))}
               </h1>
 
+              {/* Lead. First sentence is the one a founder or a recruiter
+                  needs and can read without translating anything; the
+                  specifics follow it rather than opening with it. */}
               <motion.p
                 variants={item}
-                className="mt-6 max-w-[46ch] text-base leading-relaxed text-muted-foreground md:mt-7 md:text-lg"
+                className="mt-6 max-w-[46ch] text-[15px] leading-relaxed text-muted-foreground xs:text-base md:mt-7 md:text-lg 3xl:text-xl"
               >
-                I build systems that solve real problems with AI and machine
-                learning. Agents that plan and act, retrieval that cites its
-                sources, models small enough to serve. Running today in
-                education, legal, and pharmaceutical technology.
+                <span className="text-foreground">
+                  I build AI that goes into production and stays there.
+                </span>{' '}
+                Agents that plan and act, retrieval that cites every source,
+                models small enough to run at a sensible cost. Live today
+                across education, legal, and pharmaceutical technology.
               </motion.p>
+
+              {/* The five-second read. Numbers first, so someone skimming
+                  gets the scale of the work before any of the vocabulary. */}
+              <motion.ul
+                variants={item}
+                className="mt-6 flex flex-wrap items-baseline gap-x-5 gap-y-2.5 sm:gap-x-6 xl:gap-x-8"
+              >
+                {PROOF.map(({ value, label }) => (
+                  <li key={label} className="flex items-baseline gap-2">
+                    <span className="font-mono text-lg font-medium tracking-[-0.02em] text-foreground md:text-xl">
+                      {value}
+                    </span>
+                    <span className="text-sm text-muted-foreground">{label}</span>
+                  </li>
+                ))}
+              </motion.ul>
 
               {/* Actions */}
               <motion.div
@@ -258,7 +323,7 @@ const Hero = () => {
             {/* ---------------- Right: portrait + readout ---------------- */}
             <motion.div
               variants={item}
-              className="relative mx-auto w-full max-w-[340px] lg:col-span-5 lg:ml-auto lg:mr-0"
+              className="relative mx-auto w-full max-w-[300px] xs:max-w-[340px] md:col-span-5 md:ml-auto md:mr-0 xl:max-w-[380px] 3xl:max-w-[420px]"
             >
               {/* One hover region covering the image and its readout, so the
                   canvas and the CSS-driven meter respond to the same pointer. */}
@@ -307,7 +372,7 @@ const Hero = () => {
           <motion.div
             variants={item}
             aria-hidden="true"
-            className="mt-12 flex items-center gap-3 border-t border-border pt-5 font-mono text-[12px] tracking-[0.02em] md:text-[13px]"
+            className="mt-10 flex items-center gap-3 border-t border-border pt-5 font-mono text-[11.5px] tracking-[0.02em] md:mt-12 md:text-[13px] xl:mt-16 3xl:text-[14px]"
           >
             <span className="shrink-0 select-none text-foreground/70">$</span>
             <StatusTicker
@@ -322,29 +387,37 @@ const Hero = () => {
             />
           </motion.div>
 
+          {/* Three columns rather than six. Six cells one term wide left no
+              room for the plain-English line, and a lone uppercase label is
+              only readable to someone who already knows the field. */}
           <motion.ul
             variants={item}
-            className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-3 lg:grid-cols-6"
+            className="mt-5 grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-2 lg:grid-cols-3"
           >
-            {CAPABILITIES.map((capability, i) => (
+            {CAPABILITIES.map(({ term, plain }, i) => (
               <motion.li
-                key={capability}
+                key={term}
                 initial={reduceMotion ? false : { opacity: 0 }}
                 animate={booted ? { opacity: 1 } : undefined}
                 transition={{
-                  duration: 0.5,
+                  duration: 0.4,
                   ease: EASE,
-                  delay: reduceMotion ? 0 : 0.9 + i * 0.06,
+                  delay: reduceMotion ? 0 : 0.4 + i * 0.04,
                 }}
-                className="group/cap flex items-start gap-3 bg-background p-4 transition-colors duration-300 hover:bg-surface md:p-5"
+                className="group/cap flex items-start gap-3 bg-background p-4 transition-colors duration-300 hover:bg-surface xs:p-5 md:p-6 xl:p-7"
               >
                 <span
                   aria-hidden="true"
-                  className="mt-[0.55em] h-1 w-1 shrink-0 rounded-full bg-faint transition-all duration-300 group-hover/cap:scale-150 group-hover/cap:bg-foreground"
+                  className="mt-[0.5em] h-1 w-1 shrink-0 rounded-full bg-faint transition-all duration-300 group-hover/cap:scale-150 group-hover/cap:bg-foreground"
                 />
-                <p className="font-mono text-[11.5px] uppercase leading-snug tracking-[0.08em] text-muted-foreground transition-colors duration-300 group-hover/cap:text-foreground">
-                  {capability}
-                </p>
+                <div className="min-w-0">
+                  <p className="font-mono text-[11.5px] uppercase leading-snug tracking-[0.08em] text-muted-foreground transition-colors duration-300 group-hover/cap:text-foreground">
+                    {term}
+                  </p>
+                  <p className="mt-2 text-[13px] leading-snug text-faint transition-colors duration-300 group-hover/cap:text-muted-foreground xs:text-[13.5px] 3xl:text-sm">
+                    {plain}
+                  </p>
+                </div>
               </motion.li>
             ))}
           </motion.ul>
