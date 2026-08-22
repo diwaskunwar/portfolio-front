@@ -13,6 +13,7 @@ import Section from '@/components/common/Section';
 import Container from '@/components/common/Container';
 import BlockPortrait, { type PortraitPhase } from '@/components/effects/BlockPortrait';
 import MagneticLink from '@/components/common/MagneticLink';
+import Strike from '@/components/common/Strike';
 import StatusTicker from '@/components/effects/StatusTicker';
 import RenderTerminal from '@/components/effects/RenderTerminal';
 import { useIsBooted } from '@/lib/bootState';
@@ -119,7 +120,7 @@ const Hero = () => {
     return (
       <Section
         id="hero"
-        className="pt-12 pb-10 xs:pt-14 sm:pt-16 md:pt-20 md:pb-14 xl:pt-24 xl:pb-16"
+        className="pt-7 pb-10 sm:pt-8 md:pt-10 md:pb-14 xl:pt-12 xl:pb-16"
       >
         <Container className="w-full">
           {/* Skeleton mirrors the real layout so nothing shifts on load (CLS).
@@ -153,7 +154,7 @@ const Hero = () => {
   return (
     <Section
       id="hero"
-      className="pt-12 pb-10 xs:pt-14 sm:pt-16 md:pt-20 md:pb-14 xl:pt-24 xl:pb-16"
+      className="pt-7 pb-10 sm:pt-8 md:pt-10 md:pb-14 xl:pt-12 xl:pb-16"
     >
       <Container className="w-full">
         <motion.div
@@ -164,7 +165,7 @@ const Hero = () => {
           {/* ---------------- Masthead rule ---------------- */}
           <motion.div
             variants={item}
-            className="flex items-baseline justify-between gap-6 border-b border-border pb-4"
+            className="flex items-baseline justify-between gap-6 border-b border-border pb-4 pr-14 can-hover:md:pr-0"
           >
             <span className="font-mono text-[11px] font-medium uppercase tracking-[0.24em] text-foreground sm:text-xs">
               AI / ML Engineer
@@ -213,26 +214,56 @@ const Hero = () => {
                 ))}
               </h1>
 
-              {/* Lead. First sentence is the one a founder or a recruiter
-                  needs and can read without translating anything; the
-                  specifics follow it rather than opening with it. */}
+              {/* The hook. Same correction device as the footer credit, and
+                  the one line on this page that needs no vocabulary at all:
+                  words crossed out and replaced read identically to a
+                  recruiter, a founder, and an engineer.
+
+                  The joke and the argument are the same sentence: anyone can
+                  say they code, the job is finishing something and keeping it
+                  standing. Passed as a list because Strike takes one — more
+                  verbs can be struck here later without touching anything but
+                  this array. */}
               <motion.p
                 variants={item}
-                className="mt-6 max-w-[46ch] text-[15px] leading-relaxed text-muted-foreground xs:text-base md:mt-7 md:text-lg 3xl:text-xl"
+                className="mt-4 text-[clamp(1.25rem,3.2vw,2rem)] font-medium leading-[1.15] tracking-[-0.03em] text-foreground md:mt-5"
               >
-                <span className="text-foreground">
-                  I build AI that goes into production and stays there.
-                </span>{' '}
-                Agents that plan and act, retrieval that cites every source,
-                models small enough to run at a sensible cost. Live today
-                across education, legal, and pharmaceutical technology.
+                I <Strike from={['code']} to="build" /> things that stay built.
+              </motion.p>
+
+              {/* Lead, in plain English on purpose. Non-technical readers
+                  told me they could not tell what any of this was, and the
+                  previous version opened with "agents that plan and act,
+                  retrieval that cites every source" — true, and meaningless
+                  to a founder or an HR lead. Three concrete pictures of what
+                  the software actually does for someone, no vocabulary to
+                  learn, then the count. The engineer's version follows it. */}
+              <motion.p
+                variants={item}
+                className="mt-7 max-w-[52ch] text-[15px] leading-relaxed text-muted-foreground xs:text-base md:mt-9 md:text-lg 3xl:text-xl"
+              >
+                Software that answers legal questions straight from a national
+                law archive and shows its sources, catches the wrong number in
+                a drug filing before a regulator does, and teaches a language
+                by listening. Six of them run inside real companies today.
+              </motion.p>
+
+              {/* The same sentence for the other reader. Demoted to a
+                  footnote rather than removed: an engineer scanning for the
+                  stack should still find it in two seconds. */}
+              <motion.p
+                variants={item}
+                className="mt-3 max-w-[52ch] font-mono text-[12px] leading-relaxed text-faint md:text-[12.5px]"
+              >
+                Agentic orchestration, RAG with citations, finetuned and
+                quantized models, deployed and kept alive.
               </motion.p>
 
               {/* The five-second read. Numbers first, so someone skimming
                   gets the scale of the work before any of the vocabulary. */}
               <motion.ul
                 variants={item}
-                className="mt-6 flex flex-wrap items-baseline gap-x-5 gap-y-2.5 sm:gap-x-6 xl:gap-x-8"
+                className="mt-8 flex flex-wrap items-baseline gap-x-5 gap-y-2.5 sm:gap-x-6 md:mt-9 xl:gap-x-8"
               >
                 {PROOF.map(({ value, label }) => (
                   <li key={label} className="flex items-baseline gap-2">

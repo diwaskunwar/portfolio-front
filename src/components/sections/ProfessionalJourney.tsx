@@ -18,6 +18,17 @@ interface Entry {
   period: string;
   /** Aside, such as a promotion track or an overlap with study. */
   note?: string;
+  /**
+   * One line of chapter epigraph, carrying a nod to Game of Thrones.
+   *
+   * The rule every one of these follows: it has to land for someone who has
+   * never seen the show. The reference is a second layer for whoever catches
+   * it, never the thing carrying the meaning — a founder who does not watch
+   * television should read a plain, true sentence about this chapter and
+   * miss nothing. That is also why there are six across the whole timeline
+   * and not one per paragraph: a running joke, not a costume.
+   */
+  epigraph?: string;
   /** The chapter as a developer would type it. Read before the prose is. */
   command: string;
   /** Prompt symbol. null where the chapter is source, not shell. */
@@ -39,6 +50,7 @@ const ENTRIES: Entry[] = [
     title: 'High School',
     command: '10 CLS\n20 PRINT "HELLO, WORLD"\n30 GOTO 20\nRUN',
     prefix: null,
+    epigraph: 'You know nothing. That was the whole appeal.',
     org: 'Caspian Valley College, Kumaripati',
     location: 'Lalitpur, Nepal',
     period: 'Completed',
@@ -51,6 +63,7 @@ const ENTRIES: Entry[] = [
     year: '2019',
     title: 'Bachelor in Computer Application',
     command: 'git checkout -b bca-2019   # ran 5 years, not 4',
+    epigraph: 'Winter is coming. It came, and it stayed five years.',
     org: 'Kathmandu College of Technology, Tribhuvan University',
     location: 'Bhaktapur, Nepal',
     period: 'Sep 2019 - Jun 2024',
@@ -65,6 +78,7 @@ const ENTRIES: Entry[] = [
     year: '2020',
     title: 'Learning it in the wrong order',
     command: 'npm create vite@latest && php artisan serve',
+    epigraph: 'Chaos is a ladder. I climbed it in the wrong order.',
     org: 'Self-taught, between lockdowns',
     period: '2020 - 2023',
     note: 'The part nobody puts on a resume',
@@ -80,6 +94,7 @@ const ENTRIES: Entry[] = [
     year: '2023',
     title: 'Data Science Intern',
     command: 'pip install pandas scrapy fastapi',
+    epigraph: 'The night is dark and full of dataframes.',
     org: 'Inspiring Lab',
     location: 'Lalitpur, Nepal',
     period: 'Nov 2023 - Mar 2024',
@@ -96,6 +111,7 @@ const ENTRIES: Entry[] = [
     year: '2024',
     title: 'Machine Learning Engineer',
     command: 'python finetune.py --model domain-llm --quantize int8',
+    epigraph: 'Production, like the North, remembers.',
     org: 'Next AI',
     location: 'Kathmandu, Nepal',
     period: 'Jun 2024 - Mar 2026',
@@ -116,6 +132,7 @@ const ENTRIES: Entry[] = [
     year: '2026',
     title: 'Senior AI Engineer',
     command: 'hermes run --agents 6 --trace --reverse-engineer',
+    epigraph: 'All services must die. Mine leave a trace.',
     org: 'CantorDust',
     location: 'Kathmandu, Nepal',
     period: 'Apr 2026 to now',
@@ -243,6 +260,15 @@ const ProfessionalJourney = () => {
                     </>
                   )}
                 </p>
+
+                {/* Chapter epigraph. Set as a quiet aside rather than a
+                    headline: it is the beat of humour between the facts, and
+                    it should never compete with the job title above it. */}
+                {entry.epigraph && (
+                  <p className="mt-3 border-l border-border pl-4 text-[13.5px] italic leading-relaxed text-faint transition-colors duration-500 group-hover:text-muted-foreground md:text-sm">
+                    {entry.epigraph}
+                  </p>
+                )}
 
                 {/* The chapter as a command. Reads faster than the prose and
                     says the same thing to anyone who has used a terminal. */}
